@@ -1,4 +1,4 @@
-import type { Child } from "hono/jsx";
+import { Layout } from "./Layout.js";
 
 interface FieldDoc {
 	name: string;
@@ -13,22 +13,27 @@ interface RouteDoc {
 	href: string;
 }
 
+interface ExtraTabItem {
+	href: string;
+	label: string;
+	value: string;
+}
+
 interface ExtraTab {
 	id: string;
 	label: string;
-	content: Child;
+	title: string;
+	description: string;
+	items: ExtraTabItem[];
 }
 
 interface ResourcePageProps {
 	title: string;
 	kicker: string;
 	description: string;
-	countLabel: string;
-	idField: string;
 	fields: FieldDoc[];
 	routes: RouteDoc[];
 	examples: RouteDoc[];
-	variant: "products" | "ceps";
 	extraTabs?: ExtraTab[];
 }
 
@@ -89,30 +94,51 @@ function RoutesSection({
 	);
 }
 
+function ExtraTabSection({
+	title,
+	description,
+	items,
+}: {
+	title: string;
+	description: string;
+	items: ExtraTabItem[];
+}) {
+	return (
+		<section class="doc-block">
+			<h2 class="section-title">{title}</h2>
+			<p class="lede">{description}</p>
+			<ul class="shortcut-list">
+				{items.map((item) => (
+					<li>
+						<a href={item.href}>
+							<strong>{item.label}</strong>
+							<span>{item.value}</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		</section>
+	);
+}
+
 export function ResourcePage(Props: ResourcePageProps) {
 	const {
 		title,
 		kicker,
 		description,
-		countLabel,
-		idField,
 		fields,
 		routes,
 		examples,
-		variant,
 		extraTabs = [],
 	} = Props;
 
 	return (
-		<>
-			<header class={`hero hero--${variant}`}>
+		<Layout title={`${title} · Mockê`}>
+			<header class="hero">
 				<div>
 					<p class="kicker">{kicker}</p>
 					<h1 class="page-title">{title}</h1>
 					<p class="lede">{description}</p>
-					<p class="meta">
-						{countLabel} · chave <code>{idField}</code>
-					</p>
 				</div>
 				<nav class="nav">
 					<a class="ghost" href="/">
@@ -182,10 +208,14 @@ export function ResourcePage(Props: ResourcePageProps) {
 
 				{extraTabs.map((tab) => (
 					<div x-show={`section === '${tab.id}'`} x-cloak>
-						{tab.content}
+						<ExtraTabSection
+							title={tab.title}
+							description={tab.description}
+							items={tab.items}
+						/>
 					</div>
 				))}
 			</div>
-		</>
+		</Layout>
 	);
 }

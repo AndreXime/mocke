@@ -20,10 +20,6 @@ export function HomePage() {
 			</header>
 
 			<section class="intro">
-				<h1 class="section-title">Datasets</h1>
-				<p class="lede">
-					Escolha um recurso para ver tipagem, rotas e exemplos de uso.
-				</p>
 				<nav class="page-links">
 					<a class="page-link page-link--products" href="/products">
 						<span class="kicker">E-commerce</span>

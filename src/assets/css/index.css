@@ -50,7 +50,7 @@ body {
 .wrap {
 	width: min(960px, calc(100% - 2rem));
 	margin: 0 auto;
-	padding: var(--space-lg) 0 var(--space-xl);
+	padding: var(--space-xl) 0 var(--space-xl);
 	min-width: 0;
 }
 
@@ -156,16 +156,10 @@ header.hero {
 }
 
 .page-links {
-	display: grid;
-	grid-template-columns: 1fr;
+	display: flex;
+	flex-direction: column;
 	gap: var(--space-md);
 	margin-top: var(--space-lg);
-}
-
-@media (min-width: 1024px) {
-	.page-links {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
 }
 
 .page-link {
@@ -247,6 +241,7 @@ header.hero {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0;
+	width: 100%;
 	margin: 0 0 var(--space-lg);
 	padding: 0;
 	border-bottom: 1px solid var(--color-line);
@@ -255,6 +250,8 @@ header.hero {
 .doc-tab {
 	appearance: none;
 	cursor: pointer;
+	flex: 1 1 0;
+	min-width: 0;
 	font: inherit;
 	font-size: 0.85rem;
 	font-weight: 600;
@@ -264,6 +261,7 @@ header.hero {
 	border: 0;
 	border-bottom: 2px solid transparent;
 	margin-bottom: -1px;
+	text-align: center;
 	white-space: nowrap;
 	transition: color var(--dur-fast) var(--ease-out);
 }
@@ -453,10 +451,6 @@ header.hero {
 	font-size: 0.85rem;
 }
 
-.supercategory-shortcuts {
-	margin-top: 0;
-}
-
 .shortcut-list {
 	list-style: none;
 	margin: var(--space-md) 0 0;
@@ -515,13 +509,4 @@ a:focus-visible,
 button:focus-visible {
 	outline: 2px solid var(--color-post);
 	outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	*,
-	*::before,
-	*::after {
-		animation-duration: 0.01ms !important;
-		transition-duration: 0.01ms !important;
-	}
 }
