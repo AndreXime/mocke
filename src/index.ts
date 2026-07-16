@@ -1,16 +1,16 @@
 import app from "./app.js";
+import { env } from "./lib/env.js";
 import { assertDatasetContracts } from "./modules/shared/contracts.js";
 
 assertDatasetContracts();
 
-const PORT = Number(process.env.PORT) || 3000;
 const honoApp = app();
 
 const server = Bun.serve({
 	fetch(req, bunServer) {
 		return honoApp.fetch(req, { server: bunServer });
 	},
-	port: PORT,
+	port: env.port,
 });
 
 // Retorna os ms decorridos desde o boot do processo do Bun
