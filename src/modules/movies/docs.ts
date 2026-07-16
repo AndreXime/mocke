@@ -1,6 +1,7 @@
-import { generateDocPage } from "../shared/DocsPage.js";
+import { type DocProps, generateDocPage } from "../shared/DocsPage.js";
 
-export const moviesDocsPage = generateDocPage({
+export const moviesDoc: DocProps = {
+	href: "/movies",
 	kicker: "Cinema",
 	title: "Movies",
 	description:
@@ -78,4 +79,6 @@ export const moviesDocsPage = generateDocPage({
 			description: "Filmes dirigidos por James Cameron.",
 		},
 	],
-});
+};
+
+export const moviesDocPage = generateDocPage(moviesDoc);

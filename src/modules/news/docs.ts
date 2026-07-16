@@ -1,7 +1,8 @@
-import { generateDocPage } from "../shared/DocsPage.js";
+import { type DocProps, generateDocPage } from "../shared/DocsPage.js";
 
-export const newsDocsPage = generateDocPage({
-	kicker: "Conteudo",
+export const newsDoc: DocProps = {
+	href: "/news",
+	kicker: "Conteúdo",
 	title: "News",
 	description:
 		"Artigos de noticia em ingles com titulo, texto, assunto e data. Ideal para feeds, listagens e filtros por subject.",
@@ -51,4 +52,6 @@ export const newsDocsPage = generateDocPage({
 			description: "Filtrar por subject.",
 		},
 	],
-});
+};
+
+export const newsDocPage = generateDocPage(newsDoc);

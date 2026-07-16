@@ -1,4 +1,4 @@
-import { generateDocPage } from "../shared/DocsPage.js";
+import { type DocProps, generateDocPage } from "../shared/DocsPage.js";
 import supercategoriesMap from "./supercategories.json" with { type: "json" };
 
 const supercategories = Object.entries(supercategoriesMap).map(
@@ -15,7 +15,8 @@ function productsQueryHref(categories: string[]): string {
 	return `/api/products?${params.toString()}`;
 }
 
-export const productsDocPage = generateDocPage({
+export const productsDoc: DocProps = {
+	href: "/products",
 	kicker: "E-commerce",
 	title: "Products",
 	description:
@@ -97,4 +98,6 @@ export const productsDocPage = generateDocPage({
 			})),
 		},
 	],
-});
+};
+
+export const productsDocPage = generateDocPage(productsDoc);

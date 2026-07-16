@@ -7,6 +7,7 @@ import { registerCep } from "./modules/cep/index.js";
 import { registerMovies } from "./modules/movies/index.js";
 import { registerNews } from "./modules/news/index.js";
 import { registerProducts } from "./modules/products/index.js";
+import { catalog } from "./modules/shared/catalog.js";
 import { HomePage } from "./modules/shared/HomePage.js";
 import { registerUsers } from "./modules/users/index.js";
 
@@ -33,25 +34,10 @@ export default function setupApp() {
 			description:
 				"API publica de mocks. Cada arquivo em /data vira um dataset com paginacao e filtros por igualdade de campo. Valores separados por virgula no mesmo campo fazem OR.",
 		},
-		tags: [
-			{
-				name: "Products",
-				description: "Produtos de e-commerce com filtros por campo",
-			},
-			{ name: "CEPs", description: "CEP com coordenadas" },
-			{
-				name: "News",
-				description: "Noticias com filtros por subject e date",
-			},
-			{
-				name: "Movies",
-				description: "Filmes TMDB com generos, elenco e diretores",
-			},
-			{
-				name: "Users",
-				description: "Usuarios fake com perfil, endereco e foto",
-			},
-		],
+		tags: catalog.map((dataset) => ({
+			name: dataset.title,
+			description: dataset.description,
+		})),
 	});
 
 	app.get("/docs", swaggerUI({ url: "/openapi.json" }));

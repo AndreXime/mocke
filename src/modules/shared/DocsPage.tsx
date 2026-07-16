@@ -28,6 +28,7 @@ interface ExtraTab {
 }
 
 export interface DocProps {
+	href: string;
 	title: string;
 	kicker: string;
 	description: string;

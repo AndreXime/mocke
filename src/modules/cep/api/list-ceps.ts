@@ -13,7 +13,7 @@ export const CepCoordinateSchema = z
 const listCepsRoute = createRoute({
 	method: "get",
 	path: "/api/code_cep_coordinates",
-	tags: ["CEPs"],
+	tags: ["CEP"],
 	summary: "Listar CEPs com coordenadas",
 	description:
 		"Tabela de CEP brasileiro com longitude e latitude. Filtre por POSTCODE, LON ou LAT.",

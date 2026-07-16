@@ -1,6 +1,7 @@
-import { generateDocPage } from "../shared/DocsPage.js";
+import { type DocProps, generateDocPage } from "../shared/DocsPage.js";
 
-export const usersDocsPage = generateDocPage({
+export const usersDoc: DocProps = {
+	href: "/users",
 	kicker: "Pessoas",
 	title: "Users",
 	description:
@@ -68,4 +69,6 @@ export const usersDocsPage = generateDocPage({
 			description: "Filtrar por nationality.",
 		},
 	],
-});
+};
+
+export const usersDocPage = generateDocPage(usersDoc);

@@ -6,7 +6,7 @@ import { CepCoordinateSchema } from "./list-ceps.js";
 const getCepRoute = createRoute({
 	method: "get",
 	path: "/api/code_cep_coordinates/{id}",
-	tags: ["CEPs"],
+	tags: ["CEP"],
 	summary: "Buscar CEP por POSTCODE",
 	request: {
 		params: z.object({

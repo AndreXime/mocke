@@ -1,37 +1,5 @@
+import { catalog } from "./catalog.js";
 import { Layout } from "./Layout.js";
-
-const resources = [
-	{
-		href: "/products",
-		kicker: "E-commerce",
-		title: "Products",
-		blurb: "Catalogo de produtos com filtros por categoria e estoque.",
-	},
-	{
-		href: "/cep",
-		kicker: "Geo Brasil",
-		title: "CEP",
-		blurb: "POSTCODE com longitude e latitude.",
-	},
-	{
-		href: "/news",
-		kicker: "Conteúdo",
-		title: "News",
-		blurb: "Artigos com subject, data e texto completo.",
-	},
-	{
-		href: "/movies",
-		kicker: "Cinema",
-		title: "Movies",
-		blurb: "Filmes TMDB com generos, elenco e diretores.",
-	},
-	{
-		href: "/users",
-		kicker: "Pessoas",
-		title: "Users",
-		blurb: "Perfis fake com contato, endereco e foto.",
-	},
-];
 
 export const HomePage = (
 	<Layout title="Mockê · API pública de mocks">
@@ -54,11 +22,11 @@ export const HomePage = (
 
 		<section class="intro">
 			<nav class="page-links">
-				{resources.map((resource) => (
+				{catalog.map((resource) => (
 					<a class="page-link" href={resource.href}>
 						<span class="kicker">{resource.kicker}</span>
 						<strong>{resource.title}</strong>
-						<span class="blurb">{resource.blurb}</span>
+						<span class="blurb">{resource.description}</span>
 					</a>
 				))}
 			</nav>

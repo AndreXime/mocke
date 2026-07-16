@@ -1,6 +1,7 @@
-import { generateDocPage } from "../shared/DocsPage.js";
+import { type DocProps, generateDocPage } from "../shared/DocsPage.js";
 
-export const cepDocsPage = generateDocPage({
+export const cepDoc: DocProps = {
+	href: "/cep",
 	kicker: "Geo Brasil",
 	title: "CEP",
 	description:
@@ -44,4 +45,6 @@ export const cepDocsPage = generateDocPage({
 			description: "Filtrar por POSTCODE exato.",
 		},
 	],
-});
+};
+
+export const cepDocPage = generateDocPage(cepDoc);
