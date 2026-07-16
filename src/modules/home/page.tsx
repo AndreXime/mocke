@@ -25,6 +25,12 @@ const resources = [
 		title: "Movies",
 		blurb: "Filmes TMDB com generos, elenco e diretores.",
 	},
+	{
+		href: "/users",
+		kicker: "Pessoas",
+		title: "Users",
+		blurb: "Perfis fake com contato, endereco e foto.",
+	},
 ];
 
 export const HomePage = (
@@ -34,8 +40,8 @@ export const HomePage = (
 				<p class="brand">Mockê</p>
 				<p class="lede">
 					API pública de mocks para prototipar frontends e testes. Dados reais
-					de produtos, CEPs, notícias e filmes, com paginação, filtros por campo
-					e OpenAPI.
+					de produtos, CEPs, notícias, filmes e usuários, com paginação, filtros
+					por campo e OpenAPI.
 				</p>
 			</div>
 			<nav class="nav">

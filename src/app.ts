@@ -8,6 +8,7 @@ import { registerHome } from "./modules/home/index.js";
 import { registerMovies } from "./modules/movies/index.js";
 import { registerNews } from "./modules/news/index.js";
 import { registerProducts } from "./modules/products/index.js";
+import { registerUsers } from "./modules/users/index.js";
 
 export default function setupApp() {
 	const app = new OpenAPIHono();
@@ -22,6 +23,7 @@ export default function setupApp() {
 	registerCep(app);
 	registerNews(app);
 	registerMovies(app);
+	registerUsers(app);
 
 	app.doc("/openapi.json", {
 		openapi: "3.1.0",
@@ -44,6 +46,10 @@ export default function setupApp() {
 			{
 				name: "Movies",
 				description: "Filmes TMDB com generos, elenco e diretores",
+			},
+			{
+				name: "Users",
+				description: "Usuarios fake com perfil, endereco e foto",
 			},
 		],
 	});

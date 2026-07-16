@@ -4,10 +4,10 @@ API pública de mocks para prototipar frontends sem backend real. Sobe rápido, 
 
 ## Features
 
-- **Datasets prontos**: produtos, notícias, CEPs e filmes (TMDB)
+- **Datasets prontos**: produtos, notícias, CEPs, filmes (TMDB) e usuários
 - **Paginação** com `page` e `limit`
 - **Filtros por campo**: igualdade simples; vários valores separados por vírgula fazem OR
-- **Docs interativas**: Swagger em `/docs` e páginas HTML por recurso (`/products`, `/news`, `/cep`, `/movies`)
+- **Docs interativas**: Swagger em `/docs` e páginas HTML por recurso (`/products`, `/news`, `/cep`, `/movies`, `/users`)
 - **OpenAPI** em `/openapi.json`
 - **CORS aberto** para consumo direto do browser
 - **Cache local em SQLite**: reinícios sem releitura dos CSVs quando `data/` não mudou
@@ -28,6 +28,7 @@ curl "http://localhost:3000/api/products?limit=5&inStock=True"
 curl "http://localhost:3000/api/news?subject=politicsNews&limit=5"
 curl "http://localhost:3000/api/code_cep_coordinates/01310"
 curl "http://localhost:3000/api/movies?genres=Action&limit=5"
+curl "http://localhost:3000/api/users?gender=female&limit=5"
 ```
 
 ## Scripts
