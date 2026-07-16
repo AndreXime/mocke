@@ -4,10 +4,10 @@ API pública de mocks para prototipar frontends sem backend real. Sobe rápido, 
 
 ## Features
 
-- **Datasets prontos**: produtos, notícias, CEPs, filmes (TMDB) e usuários
+- **Datasets prontos**: produtos, notícias, CEPs, filmes (TMDB), usuários e empresas
 - **Paginação** com `page` e `limit`
 - **Filtros por campo**: igualdade simples; vários valores separados por vírgula fazem OR
-- **Docs interativas**: Swagger em `/docs` e páginas HTML por recurso (`/products`, `/news`, `/cep`, `/movies`, `/users`)
+- **Docs interativas**: Swagger em `/docs` e páginas HTML por recurso (`/products`, `/news`, `/cep`, `/movies`, `/users`, `/companies`)
 - **OpenAPI** em `/openapi.json`
 - **CORS aberto** para consumo direto do browser
 - **Cache local em SQLite**: reinícios sem releitura dos CSVs quando `data/` não mudou
@@ -29,7 +29,26 @@ curl "http://localhost:3000/api/news?subject=politicsNews&limit=5"
 curl "http://localhost:3000/api/code_cep_coordinates/01310"
 curl "http://localhost:3000/api/movies?genres=Action&limit=5"
 curl "http://localhost:3000/api/users?gender=female&limit=5"
+curl "http://localhost:3000/api/companies?industry=banking&limit=5"
 ```
+
+## Como adicionar um módulo novo
+
+O nome do dataset vem do arquivo em `data/` (ex.: `data/books.csv` → dataset `books`). Prefira CSV com header em `snake_case` e uma coluna `id` explícita.
+
+1. **Coloque o arquivo de dados** em `data/` (`books.csv` ou `books.json`).
+2. **Crie o módulo** em `src/modules/books/`, espelhando `users` ou `companies`:
+   - `api/list-books.ts` — schema Zod (`BookSchema`), rota `GET /api/books`, usa `listPage("books", …)`
+   - `api/get-book.ts` — rota `GET /api/books/{id}`, usa `getRecord("books", id)`
+   - `docs.ts` — `DocProps` (campos, rotas, exemplos) + `generateDocPage`
+   - `index.ts` — `registerBooks(app)` com a página HTML `/books` e as duas rotas da API
+3. **Registre no app** em `src/app.ts`: importe e chame `registerBooks(app)`.
+4. **Inclua no catálogo** em `src/modules/shared/catalog.ts`:
+   - adicione `booksDoc` em `catalog`
+   - adicione `books: BookSchema` em `datasetSchemas`
+5. **Suba de novo** (`bun run dev`). O SQLite reimporta `data/` automaticamente se o arquivo mudou; a validação de contratos em boot confirma que o schema bate com os dados.
+
+Referência rápida: `src/modules/companies/`.
 
 ## Scripts
 
