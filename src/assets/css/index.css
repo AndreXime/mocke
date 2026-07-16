@@ -1,5 +1,5 @@
 /* Hallmark · redesign · DNA: Swagger UI · tone: technical · paper: light
- * fidelity: DNA Swagger + Mockê · structure: keep tabs · no try-it-out
+ * fidelity: DNA Swagger + Mockê · structure: keep tabs · try-it na aba Exemplos
  */
 
 :root {
@@ -529,6 +529,138 @@ header.hero {
 		align-items: baseline;
 		justify-content: space-between;
 		gap: var(--space-md);
+	}
+}
+
+.try-it {
+	margin-bottom: var(--space-xl);
+}
+
+.try-it-label {
+	display: block;
+	margin-bottom: var(--space-sm);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--color-muted);
+}
+
+.try-it-form {
+	margin: 0;
+}
+
+.try-it-row {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+	padding: 0.65rem 0.85rem;
+	border: 1px solid var(--color-get);
+	border-radius: var(--radius);
+	background: var(--color-get-bg);
+}
+
+.try-it-row .http-method {
+	align-self: flex-start;
+}
+
+.try-it-input {
+	width: 100%;
+	min-width: 0;
+	padding: 0.55rem 0.65rem;
+	border: 1px solid var(--color-line);
+	border-radius: var(--radius);
+	background: var(--color-surface);
+	color: var(--color-ink);
+	font-family: var(--font-mono);
+	font-size: 0.85rem;
+}
+
+.try-it-input:focus {
+	outline: 2px solid var(--color-get);
+	outline-offset: 1px;
+}
+
+.try-it-execute {
+	align-self: stretch;
+	padding: 0.55rem 1rem;
+	border: 0;
+	border-radius: var(--radius);
+	background: var(--color-get);
+	color: #fff;
+	font: inherit;
+	font-size: 0.85rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: filter var(--dur-fast) var(--ease-out);
+}
+
+.try-it-execute:hover:not(:disabled) {
+	filter: brightness(0.95);
+}
+
+.try-it-execute:disabled {
+	opacity: 0.7;
+	cursor: wait;
+}
+
+.try-it-response {
+	margin-top: var(--space-md);
+	border: 1px solid var(--color-line);
+	border-radius: var(--radius);
+	background: var(--color-surface);
+	overflow: hidden;
+}
+
+.try-it-status {
+	margin: 0;
+	padding: 0.55rem 0.85rem;
+	border-bottom: 1px solid var(--color-line);
+	font-family: var(--font-mono);
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: var(--color-get);
+}
+
+.try-it-error {
+	margin: 0;
+	padding: 0.55rem 0.85rem;
+	font-family: var(--font-mono);
+	font-size: 0.8rem;
+	color: var(--color-delete);
+}
+
+.try-it-body {
+	margin: 0;
+	padding: 0.85rem;
+	max-height: 28rem;
+	overflow: auto;
+	font-family: var(--font-mono);
+	font-size: 0.78rem;
+	line-height: 1.45;
+	white-space: pre-wrap;
+	word-break: break-word;
+	color: var(--color-ink);
+	background: #f7f7f7;
+}
+
+@media (min-width: 1024px) {
+	.try-it-row {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.try-it-row .http-method {
+		align-self: center;
+	}
+
+	.try-it-input {
+		flex: 1 1 auto;
+	}
+
+	.try-it-execute {
+		align-self: auto;
+		flex-shrink: 0;
 	}
 }
 

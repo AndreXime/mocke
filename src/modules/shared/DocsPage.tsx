@@ -121,6 +121,72 @@ function ExtraTabSection({
 	);
 }
 
+function TryItSection({ defaultUrl }: { defaultUrl: string }) {
+	const alpineData = `{
+		url: ${JSON.stringify(defaultUrl)},
+		loading: false,
+		status: null,
+		body: '',
+		error: '',
+		async execute() {
+			this.loading = true;
+			this.error = '';
+			this.status = null;
+			this.body = '';
+			try {
+				const res = await fetch(this.url);
+				this.status = res.status + ' ' + res.statusText;
+				const text = await res.text();
+				try {
+					this.body = JSON.stringify(JSON.parse(text), null, 2);
+				} catch (_) {
+					this.body = text;
+				}
+			} catch (e) {
+				this.error = e && e.message ? e.message : String(e);
+			} finally {
+				this.loading = false;
+			}
+		}
+	}`;
+
+	return (
+		<section class="doc-block try-it" x-data={alpineData}>
+			<h2 class="section-title">Experimente</h2>
+			<form class="try-it-form" {...{ "x-on:submit.prevent": "execute()" }}>
+				<label class="try-it-label" for="try-it-url">
+					URL da requisição
+				</label>
+				<div class="try-it-row">
+					<span class="http-method http-method--get">GET</span>
+					<input
+						id="try-it-url"
+						class="try-it-input"
+						type="text"
+						name="url"
+						autocomplete="off"
+						spellcheck={false}
+						x-model="url"
+					/>
+					<button
+						type="submit"
+						class="try-it-execute"
+						x-bind:disabled="loading"
+					>
+						<span x-text="loading ? 'Enviando…' : 'Executar'" />
+					</button>
+				</div>
+			</form>
+
+			<div class="try-it-response" x-show="status || error || body" x-cloak>
+				<p class="try-it-status" x-show="status" x-text="status" />
+				<p class="try-it-error" x-show="error" x-text="error" />
+				<pre class="try-it-body" x-show="body" x-text="body" />
+			</div>
+		</section>
+	);
+}
+
 function DocPage(Props: DocProps) {
 	const {
 		title,
@@ -203,6 +269,7 @@ function DocPage(Props: DocProps) {
 				</div>
 
 				<div x-show="section === 'examples'" x-cloak>
+					{examples[0] ? <TryItSection defaultUrl={examples[0].href} /> : null}
 					<RoutesSection title="Exemplos" routes={examples} />
 				</div>
 
