@@ -52,9 +52,6 @@ const listNewsRoute = createRoute({
 export function registerListNews(app: OpenAPIHono): void {
 	app.openapi(listNewsRoute, (c) => {
 		const page = listPage("news", c.req.url);
-		if (!page) {
-			return c.json({ error: "Dataset news indisponivel" }, 404);
-		}
 		return c.json(
 			{
 				...page,

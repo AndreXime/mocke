@@ -32,13 +32,6 @@ export function registerGetNews(app: OpenAPIHono): void {
 	app.openapi(getNewsRoute, (c) => {
 		const { id } = c.req.valid("param");
 		const record = getRecord("news", id);
-		if (record === null)
-			return c.json({ error: "Dataset news indisponivel" }, 404);
-		if (!record)
-			return c.json(
-				{ error: `Item com id ${id} nao encontrado no dataset news` },
-				404,
-			);
 		return c.json(NewsArticleSchema.parse(record), 200);
 	});
 }

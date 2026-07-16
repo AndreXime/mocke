@@ -33,20 +33,6 @@ export function registerGetCep(app: OpenAPIHono): void {
 	app.openapi(getCepRoute, (c) => {
 		const { id } = c.req.valid("param");
 		const record = getRecord("code_cep_coordinates", id);
-		if (record === null) {
-			return c.json(
-				{ error: "Dataset code_cep_coordinates indisponivel" },
-				404,
-			);
-		}
-		if (!record) {
-			return c.json(
-				{
-					error: `Item com id ${id} nao encontrado no dataset code_cep_coordinates`,
-				},
-				404,
-			);
-		}
 		return c.json(CepCoordinateSchema.parse(record), 200);
 	});
 }

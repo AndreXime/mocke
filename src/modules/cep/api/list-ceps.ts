@@ -47,12 +47,6 @@ const listCepsRoute = createRoute({
 export function registerListCeps(app: OpenAPIHono): void {
 	app.openapi(listCepsRoute, (c) => {
 		const page = listPage("code_cep_coordinates", c.req.url);
-		if (!page) {
-			return c.json(
-				{ error: "Dataset code_cep_coordinates indisponivel" },
-				404,
-			);
-		}
 		return c.json(
 			{
 				...page,

@@ -32,13 +32,6 @@ export function registerGetProduct(app: OpenAPIHono): void {
 	app.openapi(getProductRoute, (c) => {
 		const { id } = c.req.valid("param");
 		const record = getRecord("products", id);
-		if (record === null)
-			return c.json({ error: "Dataset products indisponivel" }, 404);
-		if (!record)
-			return c.json(
-				{ error: `Item com id ${id} nao encontrado no dataset products` },
-				404,
-			);
 		return c.json(ProductSchema.parse(record), 200);
 	});
 }

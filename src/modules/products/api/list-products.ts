@@ -65,7 +65,6 @@ const listProductsRoute = createRoute({
 export function registerListProducts(app: OpenAPIHono): void {
 	app.openapi(listProductsRoute, (c) => {
 		const page = listPage("products", c.req.url);
-		if (!page) return c.json({ error: "Dataset products indisponivel" }, 404);
 		return c.json(
 			{
 				...page,
