@@ -2,6 +2,8 @@
 
 API pública de mocks para prototipar frontends sem backend real. Sobe rápido, responde JSON paginado e deixa filtrar por qualquer campo do dataset.
 
+Licença: [MIT](LICENSE).
+
 ## Features
 
 - **Datasets prontos**: produtos, notícias, CEPs, filmes (TMDB), usuários e empresas
@@ -11,6 +13,8 @@ API pública de mocks para prototipar frontends sem backend real. Sobe rápido, 
 - **OpenAPI** em `/openapi.json`
 - **CORS aberto** para consumo direto do browser
 - **Cache local em SQLite**: reinícios sem releitura dos CSVs quando `data/` não mudou
+- **Rate limit** por IP (padrão 20 req/min)
+- **Health checks** em `/health` e `/ready`
 
 ## Como rodar
 
@@ -20,6 +24,39 @@ bun run dev
 ```
 
 Acesse `http://localhost:3000`.
+
+## Rate limit
+
+Por padrão, cada IP pode fazer **20 requisições por minuto** (janela fixa). Ao exceder, a API responde `429` com:
+
+| Header | Significado |
+|--------|-------------|
+| `X-RateLimit-Limit` | Limite da janela |
+| `X-RateLimit-Remaining` | Restantes na janela |
+| `X-RateLimit-Reset` | Unix timestamp (s) do fim da janela |
+| `Retry-After` | Segundos até poder tentar de novo (só no 429) |
+
+`OPTIONS`, `/health` e `/ready` não consomem o limite.
+
+O IP vem do socket da conexão. Só use `TRUST_PROXY=true` atrás de um proxy reverso que define `X-Forwarded-For` de forma confiável; caso contrário o header pode ser spoofado.
+
+## Health checks
+
+```bash
+curl "http://localhost:3000/health"   # processo vivo
+curl "http://localhost:3000/ready"    # SQLite + datasets carregados
+```
+
+`/ready` retorna `503` se o banco ou algum dataset esperado estiver indisponível.
+
+## Variáveis de ambiente
+
+| Variável | Default | Descrição |
+|----------|---------|-----------|
+| `PORT` | `3000` | Porta HTTP |
+| `RATE_LIMIT_MAX` | `20` | Máximo de requisições por janela |
+| `RATE_LIMIT_WINDOW_MS` | `60000` | Duração da janela em ms |
+| `TRUST_PROXY` | `false` | Se `true`, usa o primeiro hop de `X-Forwarded-For` |
 
 ## Exemplos
 
