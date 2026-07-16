@@ -11,7 +11,8 @@ export const NewsArticleSchema = z
 	.object({
 		id: z.string().openapi({ example: "1" }),
 		title: z.string().openapi({
-			example: "As U.S. budget fight looms, Republicans flip their fiscal script",
+			example:
+				"As U.S. budget fight looms, Republicans flip their fiscal script",
 		}),
 		text: z.string(),
 		subject: z.string().openapi({ example: "politicsNews" }),

@@ -10,7 +10,7 @@
 		"resolveJsonModule": true,
 		"jsx": "react-jsx",
 		"jsxImportSource": "hono/jsx",
-		"types": ["node"],
+		"types": ["bun"],
 
 		/* --- Strictness & Type Checking Extremos --- */
 		"noImplicitAny": true,

@@ -1,7 +1,7 @@
 import { z } from "@hono/zod-openapi";
+import { datasets } from "../../datasets/load.js";
 import { findById, paginate } from "../../datasets/query.js";
 import type { Dataset } from "../../lib/types.js";
-import { datasets } from "../../datasets/load.js";
 
 export const ErrorSchema = z
 	.object({

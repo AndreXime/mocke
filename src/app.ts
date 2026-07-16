@@ -1,22 +1,18 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { serveStatic } from "@hono/node-server/serve-static";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { serveStatic } from "hono/bun";
 import { setupCors } from "./lib/cors.js";
 import { registerCep } from "./modules/cep/index.js";
 import { registerHome } from "./modules/home/index.js";
 import { registerNews } from "./modules/news/index.js";
 import { registerProducts } from "./modules/products/index.js";
 
-const staticRoot = path.dirname(fileURLToPath(import.meta.url));
-
 export default function setupApp() {
 	const app = new OpenAPIHono();
 
 	setupCors(app);
 
-	app.use("/assets/*", serveStatic({ root: staticRoot }));
+	app.use("/assets/*", serveStatic({ root: import.meta.dir }));
 
 	registerHome(app);
 	registerProducts(app);

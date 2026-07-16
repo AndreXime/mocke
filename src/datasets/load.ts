@@ -1,11 +1,9 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { readdir } from "node:fs/promises";
+import { join } from "node:path";
 import { parse } from "csv-parse/sync";
 import type { DataRecord, Dataset, FieldValue, Scalar } from "../lib/types.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = path.join(__dirname, "..", "..", "data");
+const DATA_DIR = join(process.cwd(), "data");
 
 const ID_CANDIDATES = [
 	"id",
@@ -99,7 +97,7 @@ function recordsFromJson(parsed: unknown): DataRecord[] {
 }
 
 async function loadCsv(filePath: string): Promise<DataRecord[]> {
-	const content = await fs.readFile(filePath, "utf-8");
+	const content = await Bun.file(filePath).text();
 	const rows = parse(content, {
 		columns: true,
 		skip_empty_lines: true,
@@ -116,7 +114,7 @@ async function loadCsv(filePath: string): Promise<DataRecord[]> {
 }
 
 async function loadJson(filePath: string): Promise<DataRecord[]> {
-	const content = await fs.readFile(filePath, "utf-8");
+	const content = await Bun.file(filePath).text();
 	const parsed: unknown = JSON.parse(content);
 	return recordsFromJson(parsed);
 }
@@ -126,7 +124,7 @@ function datasetNameFromFile(fileName: string): string {
 }
 
 async function loadDataset(fileName: string): Promise<[string, Dataset]> {
-	const filePath = path.join(DATA_DIR, fileName);
+	const filePath = join(DATA_DIR, fileName);
 	const format = fileName.toLowerCase().endsWith(".csv") ? "csv" : "json";
 	const records =
 		format === "csv" ? await loadCsv(filePath) : await loadJson(filePath);
@@ -155,7 +153,7 @@ async function loadDatasets(): Promise<Map<string, Dataset>> {
 
 	let files: string[];
 	try {
-		files = await fs.readdir(DATA_DIR);
+		files = await readdir(DATA_DIR);
 	} catch {
 		return datasets;
 	}
