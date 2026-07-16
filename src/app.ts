@@ -3,6 +3,7 @@ import { serveStatic } from "hono/bun";
 import { setupCors } from "./lib/cors.js";
 import { setupErrorHandler } from "./lib/errors.js";
 import { setupOpenApi } from "./lib/openapi.js";
+import { setupRateLimit } from "./lib/rate-limit.js";
 import { registerCep } from "./modules/cep/index.js";
 import { registerCompanies } from "./modules/companies/index.js";
 import { registerMovies } from "./modules/movies/index.js";
@@ -15,6 +16,7 @@ export default function setupApp() {
 	const app = new OpenAPIHono();
 
 	setupCors(app);
+	setupRateLimit(app);
 	setupErrorHandler(app);
 
 	app.use("/assets/*", serveStatic({ root: import.meta.dir }));
