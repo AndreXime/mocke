@@ -10,7 +10,8 @@ export interface Dataset {
 	format: "csv" | "json";
 	idField: string;
 	fields: string[];
-	records: DataRecord[];
+	tableName: string;
+	columnMap: Map<string, string>;
 }
 
 export interface PageResult {

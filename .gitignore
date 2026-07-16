@@ -2,6 +2,7 @@ node_modules/
 .superpowers/
 .hallmark/
 dist/
+.cache/
 *.log
 .env
 .env.*

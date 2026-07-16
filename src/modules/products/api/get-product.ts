@@ -1,6 +1,6 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import { ErrorSchema, getDataset, getRecord } from "../../shared/api.js";
+import { ErrorSchema, getRecord } from "../../shared/api.js";
 import { ProductSchema } from "./list-products.js";
 
 const getProductRoute = createRoute({
@@ -30,12 +30,15 @@ const getProductRoute = createRoute({
 
 export function registerGetProduct(app: OpenAPIHono): void {
 	app.openapi(getProductRoute, (c) => {
-		const dataset = getDataset("products");
-		if (!dataset)
-			return c.json({ error: "Dataset products indisponivel" }, 404);
 		const { id } = c.req.valid("param");
-		const record = getRecord(dataset, id);
-		if (!record) return c.json({ error: `Produto nao encontrado: ${id}` }, 404);
+		const record = getRecord("products", id);
+		if (record === null)
+			return c.json({ error: "Dataset products indisponivel" }, 404);
+		if (!record)
+			return c.json(
+				{ error: `Item com id ${id} nao encontrado no dataset products` },
+				404,
+			);
 		return c.json(ProductSchema.parse(record), 200);
 	});
 }

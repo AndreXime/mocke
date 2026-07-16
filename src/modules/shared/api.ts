@@ -1,7 +1,7 @@
 import { z } from "@hono/zod-openapi";
-import { datasets } from "../../datasets/load.js";
-import { findById, paginate } from "../../datasets/query.js";
-import type { Dataset } from "../../lib/types.js";
+import { findById, paginate } from "../../database/runtime/query.js";
+import { getDatasetMeta } from "../../database/runtime/store.js";
+import type { DataRecord, PageResult } from "../../lib/types.js";
 
 export const ErrorSchema = z
 	.object({
@@ -25,14 +25,22 @@ export function pageResultSchema<T extends z.ZodType>(
 		.openapi(name);
 }
 
-export function getDataset(name: string): Dataset | null {
-	return datasets.get(name) ?? null;
-}
-
-export function listPage(dataset: Dataset, url: string) {
+/** `null` se o dataset nao existir. */
+export function listPage(name: string, url: string): PageResult | null {
+	const dataset = getDatasetMeta(name);
+	if (!dataset) return null;
 	return paginate(dataset, new URL(url).searchParams);
 }
 
-export function getRecord(dataset: Dataset, id: string) {
+/**
+ * `null` se o dataset nao existir.
+ * `undefined` se o registro nao for encontrado.
+ */
+export function getRecord(
+	name: string,
+	id: string,
+): DataRecord | null | undefined {
+	const dataset = getDatasetMeta(name);
+	if (!dataset) return null;
 	return findById(dataset, id);
 }

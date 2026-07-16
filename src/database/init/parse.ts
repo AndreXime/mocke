@@ -1,23 +1,5 @@
-import { readdir } from "node:fs/promises";
-import { join } from "node:path";
 import { parse } from "csv-parse/sync";
-import type { DataRecord, Dataset, FieldValue, Scalar } from "../lib/types.js";
-
-const DATA_DIR = join(process.cwd(), "data");
-
-const ID_CANDIDATES = [
-	"id",
-	"ID",
-	"_id",
-	"uuid",
-	"UUID",
-	"POSTCODE",
-	"postcode",
-	"code",
-	"CODE",
-	"slug",
-	"name",
-] as const;
+import type { DataRecord, FieldValue, Scalar } from "../../lib/types.js";
 
 function isScalar(value: unknown): value is Scalar {
 	return (
@@ -50,17 +32,14 @@ function toFieldValue(value: unknown): FieldValue {
 	return String(value);
 }
 
-function detectIdField(fields: string[]): string {
-	for (const candidate of ID_CANDIDATES) {
-		if (fields.includes(candidate)) return candidate;
-	}
-	return fields[0] ?? "id";
+function valueIsObject(item: unknown): item is Record<string, unknown> {
+	return Boolean(item) && typeof item === "object" && !Array.isArray(item);
 }
 
 function recordsFromJson(parsed: unknown): DataRecord[] {
 	if (Array.isArray(parsed)) {
 		return parsed.map((item, index) => {
-			if (item && typeof item === "object" && !Array.isArray(item)) {
+			if (valueIsObject(item)) {
 				const record: DataRecord = {};
 				for (const [key, value] of Object.entries(item)) {
 					record[key] = toFieldValue(value);
@@ -96,7 +75,7 @@ function recordsFromJson(parsed: unknown): DataRecord[] {
 	return [{ id: "0", value: toFieldValue(parsed) }];
 }
 
-async function loadCsv(filePath: string): Promise<DataRecord[]> {
+export async function loadCsv(filePath: string): Promise<DataRecord[]> {
 	const content = await Bun.file(filePath).text();
 	const rows = parse(content, {
 		columns: true,
@@ -113,61 +92,25 @@ async function loadCsv(filePath: string): Promise<DataRecord[]> {
 	});
 }
 
-async function loadJson(filePath: string): Promise<DataRecord[]> {
+export async function loadJson(filePath: string): Promise<DataRecord[]> {
 	const content = await Bun.file(filePath).text();
 	const parsed: unknown = JSON.parse(content);
 	return recordsFromJson(parsed);
 }
 
-function datasetNameFromFile(fileName: string): string {
-	return fileName.replace(/\.(csv|json)$/i, "");
+export function fileFormat(fileName: string): "csv" | "json" {
+	return fileName.toLowerCase().endsWith(".csv") ? "csv" : "json";
 }
 
-async function loadDataset(fileName: string): Promise<[string, Dataset]> {
-	const filePath = join(DATA_DIR, fileName);
-	const format = fileName.toLowerCase().endsWith(".csv") ? "csv" : "json";
-	const records =
-		format === "csv" ? await loadCsv(filePath) : await loadJson(filePath);
-	const fieldSet = new Set<string>();
-	for (const record of records) {
-		for (const key of Object.keys(record)) fieldSet.add(key);
-	}
-	const fields = [...fieldSet];
-	const name = datasetNameFromFile(fileName);
-
-	return [
-		name,
-		{
-			name,
-			source: fileName,
-			format,
-			idField: detectIdField(fields),
-			fields,
-			records,
-		},
-	];
+export async function loadDataFile(filePath: string, format: "csv" | "json") {
+	return format === "csv" ? loadCsv(filePath) : loadJson(filePath);
 }
 
-async function loadDatasets(): Promise<Map<string, Dataset>> {
-	const datasets = new Map<string, Dataset>();
-
-	let files: string[];
-	try {
-		files = await readdir(DATA_DIR);
-	} catch {
-		return datasets;
+export function cellToText(value: FieldValue | undefined): string {
+	if (value === undefined || value === null) return "";
+	if (typeof value === "string") return value;
+	if (typeof value === "number" || typeof value === "boolean") {
+		return String(value);
 	}
-
-	const dataFiles = files
-		.filter((name) => /\.(csv|json)$/i.test(name))
-		.sort((a, b) => a.localeCompare(b));
-
-	const loaded = await Promise.all(dataFiles.map(loadDataset));
-	for (const [name, dataset] of loaded) {
-		datasets.set(name, dataset);
-	}
-
-	return datasets;
+	return JSON.stringify(value);
 }
-
-export const datasets = await loadDatasets();

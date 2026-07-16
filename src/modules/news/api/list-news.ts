@@ -1,11 +1,6 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import {
-	ErrorSchema,
-	getDataset,
-	listPage,
-	pageResultSchema,
-} from "../../shared/api.js";
+import { ErrorSchema, listPage, pageResultSchema } from "../../shared/api.js";
 
 export const NewsArticleSchema = z
 	.object({
@@ -56,11 +51,10 @@ const listNewsRoute = createRoute({
 
 export function registerListNews(app: OpenAPIHono): void {
 	app.openapi(listNewsRoute, (c) => {
-		const dataset = getDataset("news");
-		if (!dataset) {
+		const page = listPage("news", c.req.url);
+		if (!page) {
 			return c.json({ error: "Dataset news indisponivel" }, 404);
 		}
-		const page = listPage(dataset, c.req.url);
 		return c.json(
 			{
 				...page,

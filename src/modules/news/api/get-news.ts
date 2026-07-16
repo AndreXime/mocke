@@ -1,6 +1,6 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import { ErrorSchema, getDataset, getRecord } from "../../shared/api.js";
+import { ErrorSchema, getRecord } from "../../shared/api.js";
 import { NewsArticleSchema } from "./list-news.js";
 
 const getNewsRoute = createRoute({
@@ -30,11 +30,15 @@ const getNewsRoute = createRoute({
 
 export function registerGetNews(app: OpenAPIHono): void {
 	app.openapi(getNewsRoute, (c) => {
-		const dataset = getDataset("news");
-		if (!dataset) return c.json({ error: "Dataset news indisponivel" }, 404);
 		const { id } = c.req.valid("param");
-		const record = getRecord(dataset, id);
-		if (!record) return c.json({ error: `Noticia nao encontrada: ${id}` }, 404);
+		const record = getRecord("news", id);
+		if (record === null)
+			return c.json({ error: "Dataset news indisponivel" }, 404);
+		if (!record)
+			return c.json(
+				{ error: `Item com id ${id} nao encontrado no dataset news` },
+				404,
+			);
 		return c.json(NewsArticleSchema.parse(record), 200);
 	});
 }

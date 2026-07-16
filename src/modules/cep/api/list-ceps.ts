@@ -1,11 +1,6 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import {
-	ErrorSchema,
-	getDataset,
-	listPage,
-	pageResultSchema,
-} from "../../shared/api.js";
+import { ErrorSchema, listPage, pageResultSchema } from "../../shared/api.js";
 
 export const CepCoordinateSchema = z
 	.object({
@@ -51,14 +46,13 @@ const listCepsRoute = createRoute({
 
 export function registerListCeps(app: OpenAPIHono): void {
 	app.openapi(listCepsRoute, (c) => {
-		const dataset = getDataset("code_cep_coordinates");
-		if (!dataset) {
+		const page = listPage("code_cep_coordinates", c.req.url);
+		if (!page) {
 			return c.json(
 				{ error: "Dataset code_cep_coordinates indisponivel" },
 				404,
 			);
 		}
-		const page = listPage(dataset, c.req.url);
 		return c.json(
 			{
 				...page,
