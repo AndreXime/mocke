@@ -6,6 +6,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { setupCors } from "./lib/cors.js";
 import { registerCep } from "./modules/cep/index.js";
 import { registerHome } from "./modules/home/index.js";
+import { registerNews } from "./modules/news/index.js";
 import { registerProducts } from "./modules/products/index.js";
 
 const staticRoot = path.dirname(fileURLToPath(import.meta.url));
@@ -20,6 +21,7 @@ export default function setupApp() {
 	registerHome(app);
 	registerProducts(app);
 	registerCep(app);
+	registerNews(app);
 
 	app.doc("/openapi.json", {
 		openapi: "3.1.0",
@@ -35,6 +37,10 @@ export default function setupApp() {
 				description: "Produtos de e-commerce com filtros por campo",
 			},
 			{ name: "CEPs", description: "CEP com coordenadas" },
+			{
+				name: "News",
+				description: "Noticias com filtros por subject e date",
+			},
 		],
 	});
 

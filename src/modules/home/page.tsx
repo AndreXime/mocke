@@ -8,7 +8,8 @@ export function HomePage() {
 					<p class="brand">Mockê</p>
 					<p class="lede">
 						API pública de mocks para prototipar frontends e testes. Dados reais
-						de produtos e CEPs, com paginação, filtros por campo e OpenAPI.
+						de produtos, CEPs e notícias, com paginação, filtros por campo e
+						OpenAPI.
 					</p>
 				</div>
 				<nav class="nav">
@@ -32,6 +33,13 @@ export function HomePage() {
 						<span class="kicker">Geo Brasil</span>
 						<strong>CEP</strong>
 						<span class="blurb">POSTCODE com longitude e latitude.</span>
+					</a>
+					<a class="page-link page-link--news" href="/news">
+						<span class="kicker">Conteúdo</span>
+						<strong>News</strong>
+						<span class="blurb">
+							Artigos com subject, data e texto completo.
+						</span>
 					</a>
 				</nav>
 			</section>

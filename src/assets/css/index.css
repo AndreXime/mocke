@@ -202,6 +202,15 @@ header.hero {
 	border-left-width: 3px;
 }
 
+.page-link--news {
+	border-left: 3px solid var(--color-put);
+}
+
+.page-link--news:hover {
+	border-color: var(--color-put);
+	border-left-width: 3px;
+}
+
 .kicker {
 	margin: 0;
 	color: var(--color-get);
@@ -213,6 +222,10 @@ header.hero {
 
 .page-link--ceps .kicker {
 	color: var(--color-post);
+}
+
+.page-link--news .kicker {
+	color: var(--color-put);
 }
 
 .blurb {
