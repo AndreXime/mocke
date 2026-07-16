@@ -1,6 +1,5 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import type { Dataset } from "../../../lib/types.js";
 import { ErrorSchema, getDataset, getRecord } from "../../shared/api.js";
 import { ProductSchema } from "./list-products.js";
 
@@ -29,12 +28,9 @@ const getProductRoute = createRoute({
 	},
 });
 
-export function registerGetProduct(
-	app: OpenAPIHono,
-	datasets: Map<string, Dataset>,
-): void {
+export function registerGetProduct(app: OpenAPIHono): void {
 	app.openapi(getProductRoute, (c) => {
-		const dataset = getDataset(datasets, "products");
+		const dataset = getDataset("products");
 		if (!dataset)
 			return c.json({ error: "Dataset products indisponivel" }, 404);
 		const { id } = c.req.valid("param");

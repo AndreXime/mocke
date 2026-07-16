@@ -1,6 +1,7 @@
 import { z } from "@hono/zod-openapi";
 import { findById, paginate } from "../../datasets/query.js";
 import type { Dataset } from "../../lib/types.js";
+import { datasets } from "../../datasets/load.js";
 
 export const ErrorSchema = z
 	.object({
@@ -24,10 +25,7 @@ export function pageResultSchema<T extends z.ZodType>(
 		.openapi(name);
 }
 
-export function getDataset(
-	datasets: Map<string, Dataset>,
-	name: string,
-): Dataset | null {
+export function getDataset(name: string): Dataset | null {
 	return datasets.get(name) ?? null;
 }
 

@@ -3,7 +3,6 @@ import { fileURLToPath } from "node:url";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { loadDatasets } from "./datasets/load.js";
 import { setupCors } from "./lib/cors.js";
 import { registerCep } from "./modules/cep/index.js";
 import { registerHome } from "./modules/home/index.js";
@@ -13,15 +12,14 @@ const staticRoot = path.dirname(fileURLToPath(import.meta.url));
 
 export default function setupApp() {
 	const app = new OpenAPIHono();
-	const datasets = loadDatasets();
 
 	setupCors(app);
 
 	app.use("/assets/*", serveStatic({ root: staticRoot }));
 
 	registerHome(app);
-	registerProducts(app, datasets);
-	registerCep(app, datasets);
+	registerProducts(app);
+	registerCep(app);
 
 	app.doc("/openapi.json", {
 		openapi: "3.1.0",

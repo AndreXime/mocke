@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "csv-parse/sync";
@@ -98,8 +98,9 @@ function recordsFromJson(parsed: unknown): DataRecord[] {
 	return [{ id: "0", value: toFieldValue(parsed) }];
 }
 
-function loadCsv(filePath: string): DataRecord[] {
-	const rows = parse(fs.readFileSync(filePath, "utf-8"), {
+async function loadCsv(filePath: string): Promise<DataRecord[]> {
+	const content = await fs.readFile(filePath, "utf-8");
+	const rows = parse(content, {
 		columns: true,
 		skip_empty_lines: true,
 		relax_column_count: true,
@@ -114,8 +115,9 @@ function loadCsv(filePath: string): DataRecord[] {
 	});
 }
 
-function loadJson(filePath: string): DataRecord[] {
-	const parsed: unknown = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+async function loadJson(filePath: string): Promise<DataRecord[]> {
+	const content = await fs.readFile(filePath, "utf-8");
+	const parsed: unknown = JSON.parse(content);
 	return recordsFromJson(parsed);
 }
 
@@ -123,38 +125,51 @@ function datasetNameFromFile(fileName: string): string {
 	return fileName.replace(/\.(csv|json)$/i, "");
 }
 
-export function loadDatasets(): Map<string, Dataset> {
-	const datasets = new Map<string, Dataset>();
-
-	if (!fs.existsSync(DATA_DIR)) {
-		return datasets;
+async function loadDataset(fileName: string): Promise<[string, Dataset]> {
+	const filePath = path.join(DATA_DIR, fileName);
+	const format = fileName.toLowerCase().endsWith(".csv") ? "csv" : "json";
+	const records =
+		format === "csv" ? await loadCsv(filePath) : await loadJson(filePath);
+	const fieldSet = new Set<string>();
+	for (const record of records) {
+		for (const key of Object.keys(record)) fieldSet.add(key);
 	}
+	const fields = [...fieldSet];
+	const name = datasetNameFromFile(fileName);
 
-	const files = fs
-		.readdirSync(DATA_DIR)
-		.filter((name) => /\.(csv|json)$/i.test(name))
-		.sort((a, b) => a.localeCompare(b));
-
-	for (const fileName of files) {
-		const filePath = path.join(DATA_DIR, fileName);
-		const format = fileName.toLowerCase().endsWith(".csv") ? "csv" : "json";
-		const records = format === "csv" ? loadCsv(filePath) : loadJson(filePath);
-		const fieldSet = new Set<string>();
-		for (const record of records) {
-			for (const key of Object.keys(record)) fieldSet.add(key);
-		}
-		const fields = [...fieldSet];
-		const name = datasetNameFromFile(fileName);
-
-		datasets.set(name, {
+	return [
+		name,
+		{
 			name,
 			source: fileName,
 			format,
 			idField: detectIdField(fields),
 			fields,
 			records,
-		});
+		},
+	];
+}
+
+async function loadDatasets(): Promise<Map<string, Dataset>> {
+	const datasets = new Map<string, Dataset>();
+
+	let files: string[];
+	try {
+		files = await fs.readdir(DATA_DIR);
+	} catch {
+		return datasets;
+	}
+
+	const dataFiles = files
+		.filter((name) => /\.(csv|json)$/i.test(name))
+		.sort((a, b) => a.localeCompare(b));
+
+	const loaded = await Promise.all(dataFiles.map(loadDataset));
+	for (const [name, dataset] of loaded) {
+		datasets.set(name, dataset);
 	}
 
 	return datasets;
 }
+
+export const datasets = await loadDatasets();

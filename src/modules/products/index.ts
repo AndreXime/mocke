@@ -1,5 +1,4 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
-import type { Dataset } from "../../lib/types.js";
 import { registerGetProduct } from "./api/get-product.js";
 import { registerListProducts } from "./api/list-products.js";
 import { ProductsPage } from "./docs.js";
@@ -12,10 +11,7 @@ const supercategories = Object.entries(supercategoriesMap).map(
 	}),
 );
 
-export function registerProducts(
-	app: OpenAPIHono,
-	datasets: Map<string, Dataset>,
-): void {
+export function registerProducts(app: OpenAPIHono): void {
 	app.get("/products", (c) =>
 		c.html(
 			ProductsPage({
@@ -24,6 +20,6 @@ export function registerProducts(
 		),
 	);
 
-	registerListProducts(app, datasets);
-	registerGetProduct(app, datasets);
+	registerListProducts(app);
+	registerGetProduct(app);
 }
