@@ -1,8 +1,8 @@
 import { z } from "@hono/zod-openapi";
 import { findById, paginate } from "../../database/runtime/query.js";
 import { getDatasetMeta } from "../../database/runtime/store.js";
-import { HTTPError } from "../../lib/errors.js";
 import type { PageResult } from "../../lib/types.js";
+import { HTTPError } from "../../middlewares/errors.js";
 import type { DatasetName, DatasetRecords } from "./contracts.js";
 
 export type { DatasetName, DatasetRecords } from "./contracts.js";

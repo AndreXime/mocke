@@ -1,10 +1,10 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { serveStatic } from "hono/bun";
-import { setupCors } from "./lib/cors.js";
-import { setupErrorHandler } from "./lib/errors.js";
-import { setupOpenApi } from "./lib/openapi.js";
-import { setupRateLimit } from "./lib/rate-limit.js";
-import { setupSecurityHeaders } from "./lib/security-headers.js";
+import { setupCors } from "./middlewares/cors.js";
+import { setupErrorHandler } from "./middlewares/errors.js";
+import { setupOpenApi } from "./middlewares/openapi.js";
+import { setupRateLimit } from "./middlewares/rate-limit.js";
+import { setupSecurityHeaders } from "./middlewares/security-headers.js";
 import { registerCep } from "./modules/cep/index.js";
 import { registerCompanies } from "./modules/companies/index.js";
 import { registerHealth } from "./modules/health/index.js";

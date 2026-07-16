@@ -1,7 +1,7 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import type { Context } from "hono";
 import { getConnInfo } from "hono/bun";
-import { env } from "./env.js";
+import { env } from "../lib/env.js";
 
 const PRUNE_EVERY = 1_000;
 
