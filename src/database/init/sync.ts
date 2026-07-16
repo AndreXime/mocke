@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { mkdir, readdir, rename, rm, stat } from "node:fs/promises";
 import { join } from "node:path";
 import type { DataRecord } from "../../lib/types.js";
+import { cellToText, fileFormat, loadDataFile } from "./parse.js";
 import {
 	CACHE_DIR,
 	DATA_DIR,
@@ -14,7 +15,6 @@ import {
 	quoteIdent,
 	readMetaHash,
 } from "./sqlite.js";
-import { cellToText, fileFormat, loadDataFile } from "./parse.js";
 
 const ID_CANDIDATES = [
 	"id",

@@ -4,10 +4,10 @@ import { serveStatic } from "hono/bun";
 import { setupCors } from "./lib/cors.js";
 import { setupErrorHandler } from "./lib/errors.js";
 import { registerCep } from "./modules/cep/index.js";
-import { registerHome } from "./modules/home/index.js";
 import { registerMovies } from "./modules/movies/index.js";
 import { registerNews } from "./modules/news/index.js";
 import { registerProducts } from "./modules/products/index.js";
+import { HomePage } from "./modules/shared/HomePage.js";
 import { registerUsers } from "./modules/users/index.js";
 
 export default function setupApp() {
@@ -17,8 +17,8 @@ export default function setupApp() {
 	setupErrorHandler(app);
 
 	app.use("/assets/*", serveStatic({ root: import.meta.dir }));
+	app.get("/", (c) => c.html(HomePage));
 
-	registerHome(app);
 	registerProducts(app);
 	registerCep(app);
 	registerNews(app);

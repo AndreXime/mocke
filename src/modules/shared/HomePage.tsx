@@ -1,4 +1,4 @@
-import { Layout } from "../shared/Layout.js";
+import { Layout } from "./Layout.js";
 
 const resources = [
 	{
