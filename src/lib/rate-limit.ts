@@ -1,9 +1,8 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import type { Context } from "hono";
 import { getConnInfo } from "hono/bun";
+import { env } from "./env.js";
 
-const LIMIT = 20;
-const WINDOW_MS = 60_000;
 const PRUNE_EVERY = 1_000;
 
 interface WindowEntry {
@@ -21,64 +20,71 @@ interface RateLimitResult {
 const store = new Map<string, WindowEntry>();
 let operationsSincePrune = 0;
 
-export function getClientIp(c: Context): string {
-	const forwarded = c.req.header("x-forwarded-for");
-	if (forwarded) {
-		const first = forwarded.split(",")[0]?.trim();
-		if (first) return first;
-	}
-
+function getSocketIp(c: Context): string | null {
 	try {
 		const address = getConnInfo(c).remote.address;
-		if (address) return address;
+		return address ?? null;
 	} catch {
 		// Bun.serve sem env.server no fetch
+		return null;
 	}
-
-	return "unknown";
 }
 
-function maybePrune(now: number): void {
+export function getClientIp(c: Context): string {
+	if (env.trustProxy) {
+		const forwarded = c.req.header("x-forwarded-for");
+		if (forwarded) {
+			const first = forwarded.split(",")[0]?.trim();
+			if (first) return first;
+		}
+	}
+
+	return getSocketIp(c) ?? "unknown";
+}
+
+function maybePrune(now: number, windowMs: number): void {
 	operationsSincePrune += 1;
 	if (operationsSincePrune < PRUNE_EVERY) return;
 	operationsSincePrune = 0;
 
 	for (const [ip, entry] of store) {
-		if (now - entry.windowStart >= WINDOW_MS) {
+		if (now - entry.windowStart >= windowMs) {
 			store.delete(ip);
 		}
 	}
 }
 
 export function checkAndConsume(ip: string, now = Date.now()): RateLimitResult {
-	maybePrune(now);
+	const limit = env.rateLimitMax;
+	const windowMs = env.rateLimitWindowMs;
+	maybePrune(now, windowMs);
 
 	const entry = store.get(ip);
-	if (!entry || now - entry.windowStart >= WINDOW_MS) {
+	if (!entry || now - entry.windowStart >= windowMs) {
 		store.set(ip, { count: 1, windowStart: now });
 		return {
 			allowed: true,
-			limit: LIMIT,
-			remaining: LIMIT - 1,
-			resetAt: now + WINDOW_MS,
+			limit,
+			remaining: limit - 1,
+			resetAt: now + windowMs,
 		};
 	}
 
-	if (entry.count >= LIMIT) {
+	if (entry.count >= limit) {
 		return {
 			allowed: false,
-			limit: LIMIT,
+			limit,
 			remaining: 0,
-			resetAt: entry.windowStart + WINDOW_MS,
+			resetAt: entry.windowStart + windowMs,
 		};
 	}
 
 	entry.count += 1;
 	return {
 		allowed: true,
-		limit: LIMIT,
-		remaining: LIMIT - entry.count,
-		resetAt: entry.windowStart + WINDOW_MS,
+		limit,
+		remaining: limit - entry.count,
+		resetAt: entry.windowStart + windowMs,
 	};
 }
 
@@ -100,9 +106,15 @@ function setRateLimitHeaders(
 	}
 }
 
+function shouldSkipRateLimit(c: Context): boolean {
+	if (c.req.method === "OPTIONS") return true;
+	const path = c.req.path;
+	return path === "/health" || path === "/ready";
+}
+
 export function setupRateLimit(app: OpenAPIHono): void {
 	app.use("*", async (c, next) => {
-		if (c.req.method === "OPTIONS") {
+		if (shouldSkipRateLimit(c)) {
 			return next();
 		}
 
