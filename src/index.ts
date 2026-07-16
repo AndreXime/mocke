@@ -10,4 +10,8 @@ const server = Bun.serve({
 	port: PORT,
 });
 
-console.log(`Mockê em http://localhost:${server.port}`);
+// Retorna os ms decorridos desde o boot do processo do Bun
+const startupTime = performance.now();
+
+console.log(`Servidor escutando em http://localhost:${server.port}`);
+console.log(`Servidor iniciou em ${startupTime.toFixed(2)}ms`);
