@@ -1,21 +1,7 @@
 import type { z } from "@hono/zod-openapi";
 import { paginate } from "../../database/runtime/query.js";
 import { getDatasetMeta } from "../../database/runtime/store.js";
-import { CepCoordinateSchema } from "../cep/api/list-ceps.js";
-import { CompanySchema } from "../companies/api/list-companies.js";
-import { MovieSchema } from "../movies/api/list-movies.js";
-import { NewsArticleSchema } from "../news/api/list-news.js";
-import { ProductSchema } from "../products/api/list-products.js";
-import { UserSchema } from "../users/api/list-users.js";
-
-export const datasetSchemas = {
-	products: ProductSchema,
-	code_cep_coordinates: CepCoordinateSchema,
-	news: NewsArticleSchema,
-	movies: MovieSchema,
-	users: UserSchema,
-	companies: CompanySchema,
-} as const;
+import { datasetSchemas } from "./catalog.js";
 
 export type DatasetName = keyof typeof datasetSchemas;
 
