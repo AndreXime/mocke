@@ -38,9 +38,13 @@ function buildFilters(
 		if (filterValues.length === 0) continue;
 
 		const column = dataset.columnMap.get(key) ?? key;
-		const placeholders = filterValues.map(() => "?").join(", ");
-		parts.push(`${quoteIdent(column)} IN (${placeholders})`);
-		values.push(...filterValues);
+		const col = quoteIdent(column);
+		// Exact match or membership in a comma-separated list (e.g. genres=Action).
+		const valueClauses = filterValues.map((filterValue) => {
+			values.push(filterValue, filterValue);
+			return `(${col} = ? OR (',' || REPLACE(${col}, ', ', ',') || ',') LIKE '%,' || ? || ',%')`;
+		});
+		parts.push(`(${valueClauses.join(" OR ")})`);
 	}
 
 	if (parts.length === 0) return { clause: "", values: [] };

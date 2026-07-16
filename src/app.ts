@@ -5,6 +5,7 @@ import { setupCors } from "./lib/cors.js";
 import { setupErrorHandler } from "./lib/errors.js";
 import { registerCep } from "./modules/cep/index.js";
 import { registerHome } from "./modules/home/index.js";
+import { registerMovies } from "./modules/movies/index.js";
 import { registerNews } from "./modules/news/index.js";
 import { registerProducts } from "./modules/products/index.js";
 
@@ -20,6 +21,7 @@ export default function setupApp() {
 	registerProducts(app);
 	registerCep(app);
 	registerNews(app);
+	registerMovies(app);
 
 	app.doc("/openapi.json", {
 		openapi: "3.1.0",
@@ -38,6 +40,10 @@ export default function setupApp() {
 			{
 				name: "News",
 				description: "Noticias com filtros por subject e date",
+			},
+			{
+				name: "Movies",
+				description: "Filmes TMDB com generos, elenco e diretores",
 			},
 		],
 	});

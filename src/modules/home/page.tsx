@@ -8,8 +8,8 @@ export function HomePage() {
 					<p class="brand">Mockê</p>
 					<p class="lede">
 						API pública de mocks para prototipar frontends e testes. Dados reais
-						de produtos, CEPs e notícias, com paginação, filtros por campo e
-						OpenAPI.
+						de produtos, CEPs, notícias e filmes, com paginação, filtros por
+						campo e OpenAPI.
 					</p>
 				</div>
 				<nav class="nav">
@@ -39,6 +39,13 @@ export function HomePage() {
 						<strong>News</strong>
 						<span class="blurb">
 							Artigos com subject, data e texto completo.
+						</span>
+					</a>
+					<a class="page-link page-link--movies" href="/movies">
+						<span class="kicker">Cinema</span>
+						<strong>Movies</strong>
+						<span class="blurb">
+							Filmes TMDB com generos, elenco e diretores.
 						</span>
 					</a>
 				</nav>
