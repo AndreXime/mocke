@@ -31,7 +31,6 @@ const getProductRoute = createRoute({
 export function registerGetProduct(app: OpenAPIHono): void {
 	app.openapi(getProductRoute, (c) => {
 		const { id } = c.req.valid("param");
-		const record = getRecord("products", id);
-		return c.json(ProductSchema.parse(record), 200);
+		return c.json(getRecord("products", id), 200);
 	});
 }

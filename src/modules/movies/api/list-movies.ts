@@ -33,6 +33,8 @@ export const MovieSchema = z
 	})
 	.openapi("Movie");
 
+export type Movie = z.infer<typeof MovieSchema>;
+
 const listMoviesRoute = createRoute({
 	method: "get",
 	path: "/api/movies",
@@ -75,13 +77,6 @@ const listMoviesRoute = createRoute({
 
 export function registerListMovies(app: OpenAPIHono): void {
 	app.openapi(listMoviesRoute, (c) => {
-		const page = listPage("movies", c.req.url);
-		return c.json(
-			{
-				...page,
-				data: page.data.map((row) => MovieSchema.parse(row)),
-			},
-			200,
-		);
+		return c.json(listPage("movies", c.req.url), 200);
 	});
 }

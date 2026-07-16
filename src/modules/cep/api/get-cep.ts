@@ -32,7 +32,6 @@ const getCepRoute = createRoute({
 export function registerGetCep(app: OpenAPIHono): void {
 	app.openapi(getCepRoute, (c) => {
 		const { id } = c.req.valid("param");
-		const record = getRecord("code_cep_coordinates", id);
-		return c.json(CepCoordinateSchema.parse(record), 200);
+		return c.json(getRecord("code_cep_coordinates", id), 200);
 	});
 }

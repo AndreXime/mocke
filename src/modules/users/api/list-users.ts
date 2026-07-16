@@ -27,6 +27,8 @@ export const UserSchema = z
 	})
 	.openapi("User");
 
+export type User = z.infer<typeof UserSchema>;
+
 const listUsersRoute = createRoute({
 	method: "get",
 	path: "/api/users",
@@ -64,13 +66,6 @@ const listUsersRoute = createRoute({
 
 export function registerListUsers(app: OpenAPIHono): void {
 	app.openapi(listUsersRoute, (c) => {
-		const page = listPage("users", c.req.url);
-		return c.json(
-			{
-				...page,
-				data: page.data.map((row) => UserSchema.parse(row)),
-			},
-			200,
-		);
+		return c.json(listPage("users", c.req.url), 200);
 	});
 }

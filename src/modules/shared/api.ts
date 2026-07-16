@@ -2,7 +2,10 @@ import { z } from "@hono/zod-openapi";
 import { findById, paginate } from "../../database/runtime/query.js";
 import { getDatasetMeta } from "../../database/runtime/store.js";
 import { HTTPError } from "../../lib/errors.js";
-import type { DataRecord, PageResult } from "../../lib/types.js";
+import type { PageResult } from "../../lib/types.js";
+import type { DatasetName, DatasetRecords } from "./contracts.js";
+
+export type { DatasetName, DatasetRecords } from "./contracts.js";
 
 export const ErrorSchema = z
 	.object({
@@ -26,15 +29,23 @@ export function pageResultSchema<T extends z.ZodType>(
 		.openapi(name);
 }
 
-export function listPage(name: string, url: string): PageResult {
+export function listPage<N extends DatasetName>(
+	name: N,
+	url: string,
+): PageResult<DatasetRecords[N]> {
 	const dataset = getDatasetMeta(name);
 	if (!dataset) {
 		throw new HTTPError(404, `Dataset ${name} indisponivel`);
 	}
-	return paginate(dataset, new URL(url).searchParams);
+	return paginate(dataset, new URL(url).searchParams) as PageResult<
+		DatasetRecords[N]
+	>;
 }
 
-export function getRecord(name: string, id: string): DataRecord {
+export function getRecord<N extends DatasetName>(
+	name: N,
+	id: string,
+): DatasetRecords[N] {
 	const dataset = getDatasetMeta(name);
 	if (!dataset) {
 		throw new HTTPError(404, `Dataset ${name} indisponivel`);
@@ -46,5 +57,5 @@ export function getRecord(name: string, id: string): DataRecord {
 			`Item com id ${id} nao encontrado no dataset ${name}`,
 		);
 	}
-	return record;
+	return record as DatasetRecords[N];
 }

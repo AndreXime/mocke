@@ -62,7 +62,13 @@ export function quoteIdent(identifier: string): string {
 }
 
 export function openDatabase(path: string): Database {
-	return new Database(path, { create: true, strict: true });
+	const db = new Database(path, { create: true, strict: true });
+	db.run("PRAGMA journal_mode = WAL");
+	db.run("PRAGMA synchronous = NORMAL");
+	// Negative cache_size is KiB; -131072 ≈ 128 MiB. mmap_size = 256 MiB.
+	db.run("PRAGMA cache_size = -131072");
+	db.run("PRAGMA mmap_size = 268435456");
+	return db;
 }
 
 export function readMetaHash(db: Database): string | null {

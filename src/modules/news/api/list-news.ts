@@ -15,6 +15,8 @@ export const NewsArticleSchema = z
 	})
 	.openapi("NewsArticle");
 
+export type NewsArticle = z.infer<typeof NewsArticleSchema>;
+
 const listNewsRoute = createRoute({
 	method: "get",
 	path: "/api/news",
@@ -51,13 +53,6 @@ const listNewsRoute = createRoute({
 
 export function registerListNews(app: OpenAPIHono): void {
 	app.openapi(listNewsRoute, (c) => {
-		const page = listPage("news", c.req.url);
-		return c.json(
-			{
-				...page,
-				data: page.data.map((row) => NewsArticleSchema.parse(row)),
-			},
-			200,
-		);
+		return c.json(listPage("news", c.req.url), 200);
 	});
 }

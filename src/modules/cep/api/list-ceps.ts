@@ -10,6 +10,8 @@ export const CepCoordinateSchema = z
 	})
 	.openapi("CepCoordinate");
 
+export type CepCoordinate = z.infer<typeof CepCoordinateSchema>;
+
 const listCepsRoute = createRoute({
 	method: "get",
 	path: "/api/code_cep_coordinates",
@@ -46,13 +48,6 @@ const listCepsRoute = createRoute({
 
 export function registerListCeps(app: OpenAPIHono): void {
 	app.openapi(listCepsRoute, (c) => {
-		const page = listPage("code_cep_coordinates", c.req.url);
-		return c.json(
-			{
-				...page,
-				data: page.data.map((row) => CepCoordinateSchema.parse(row)),
-			},
-			200,
-		);
+		return c.json(listPage("code_cep_coordinates", c.req.url), 200);
 	});
 }

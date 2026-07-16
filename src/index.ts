@@ -1,4 +1,7 @@
 import app from "./app.js";
+import { assertDatasetContracts } from "./modules/shared/contracts.js";
+
+assertDatasetContracts();
 
 const PORT = Number(process.env.PORT) || 3000;
 

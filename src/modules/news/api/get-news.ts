@@ -31,7 +31,6 @@ const getNewsRoute = createRoute({
 export function registerGetNews(app: OpenAPIHono): void {
 	app.openapi(getNewsRoute, (c) => {
 		const { id } = c.req.valid("param");
-		const record = getRecord("news", id);
-		return c.json(NewsArticleSchema.parse(record), 200);
+		return c.json(getRecord("news", id), 200);
 	});
 }

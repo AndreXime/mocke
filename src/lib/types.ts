@@ -14,11 +14,11 @@ export interface Dataset {
 	columnMap: Map<string, string>;
 }
 
-export interface PageResult {
+export interface PageResult<T = DataRecord> {
 	dataset: string;
 	page: number;
 	limit: number;
 	total: number;
 	totalPages: number;
-	data: DataRecord[];
+	data: T[];
 }

@@ -31,7 +31,6 @@ const getMovieRoute = createRoute({
 export function registerGetMovie(app: OpenAPIHono): void {
 	app.openapi(getMovieRoute, (c) => {
 		const { id } = c.req.valid("param");
-		const record = getRecord("movies", id);
-		return c.json(MovieSchema.parse(record), 200);
+		return c.json(getRecord("movies", id), 200);
 	});
 }

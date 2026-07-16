@@ -23,6 +23,8 @@ export const ProductSchema = z
 	})
 	.openapi("Product");
 
+export type Product = z.infer<typeof ProductSchema>;
+
 const listProductsRoute = createRoute({
 	method: "get",
 	path: "/api/products",
@@ -64,13 +66,6 @@ const listProductsRoute = createRoute({
 
 export function registerListProducts(app: OpenAPIHono): void {
 	app.openapi(listProductsRoute, (c) => {
-		const page = listPage("products", c.req.url);
-		return c.json(
-			{
-				...page,
-				data: page.data.map((row) => ProductSchema.parse(row)),
-			},
-			200,
-		);
+		return c.json(listPage("products", c.req.url), 200);
 	});
 }

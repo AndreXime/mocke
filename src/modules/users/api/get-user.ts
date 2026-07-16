@@ -31,7 +31,6 @@ const getUserRoute = createRoute({
 export function registerGetUser(app: OpenAPIHono): void {
 	app.openapi(getUserRoute, (c) => {
 		const { id } = c.req.valid("param");
-		const record = getRecord("users", id);
-		return c.json(UserSchema.parse(record), 200);
+		return c.json(getRecord("users", id), 200);
 	});
 }

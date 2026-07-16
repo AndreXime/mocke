@@ -1,8 +1,19 @@
+import type { Statement } from "bun:sqlite";
 import type { DataRecord, Dataset, PageResult } from "../../lib/types.js";
 import { quoteIdent } from "../init/sqlite.js";
 import { getDb } from "./store.js";
 
 const RESERVED_PARAMS = new Set(["page", "limit"]);
+const prepared = new Map<string, Statement>();
+
+function prepare(sql: string): Statement {
+	let statement = prepared.get(sql);
+	if (!statement) {
+		statement = getDb().query(sql);
+		prepared.set(sql, statement);
+	}
+	return statement;
+}
 
 function splitFilterValues(raw: string): string[] {
 	return raw
@@ -62,18 +73,17 @@ export function paginate(
 	);
 	const { clause, values } = buildFilters(params, dataset);
 	const table = quoteIdent(dataset.tableName);
-	const db = getDb();
 
-	const countRow = db
-		.query(`SELECT COUNT(*) AS total FROM ${table} ${clause}`)
-		.get(...values) as { total: number };
+	const countRow = prepare(
+		`SELECT COUNT(*) AS total FROM ${table} ${clause}`,
+	).get(...values) as { total: number };
 	const total = Number(countRow.total);
 	const totalPages = Math.max(1, Math.ceil(total / limit));
 	const start = (page - 1) * limit;
 
-	const rows = db
-		.query(`SELECT * FROM ${table} ${clause} LIMIT ? OFFSET ?`)
-		.all(...values, limit, start) as Array<Record<string, string | null>>;
+	const rows = prepare(
+		`SELECT * FROM ${table} ${clause} LIMIT ? OFFSET ?`,
+	).all(...values, limit, start) as Array<Record<string, string | null>>;
 
 	return {
 		dataset: dataset.name,
@@ -87,12 +97,9 @@ export function paginate(
 
 export function findById(dataset: Dataset, id: string): DataRecord | undefined {
 	const idColumn = dataset.columnMap.get(dataset.idField) ?? dataset.idField;
-	const db = getDb();
-	const row = db
-		.query(
-			`SELECT * FROM ${quoteIdent(dataset.tableName)} WHERE ${quoteIdent(idColumn)} = ? LIMIT 1`,
-		)
-		.get(id) as Record<string, string | null> | null;
+	const row = prepare(
+		`SELECT * FROM ${quoteIdent(dataset.tableName)} WHERE ${quoteIdent(idColumn)} = ? LIMIT 1`,
+	).get(id) as Record<string, string | null> | null;
 
 	if (!row) return undefined;
 	return rowToRecord(row, dataset);
