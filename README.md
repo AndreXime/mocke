@@ -25,6 +25,25 @@ bun run dev
 
 Acesse `http://localhost:3000`.
 
+### Docker
+
+```bash
+docker build -t mocke .
+docker run --rm -p 3000:3000 mocke
+```
+
+Atrás de um proxy reverso, passe `TRUST_PROXY=true`:
+
+```bash
+docker run --rm -p 3000:3000 -e TRUST_PROXY=true mocke
+```
+
+O volume opcional `.cache` evita reimportar os CSVs a cada restart:
+
+```bash
+docker run --rm -p 3000:3000 -v mocke-cache:/app/.cache mocke
+```
+
 ## Rate limit
 
 Por padrão, cada IP pode fazer **20 requisições por minuto** (janela fixa). Ao exceder, a API responde `429` com:

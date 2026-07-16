@@ -10,6 +10,7 @@ const server = Bun.serve({
 	fetch(req, bunServer) {
 		return honoApp.fetch(req, { server: bunServer });
 	},
+	hostname: "0.0.0.0",
 	port: env.port,
 });
 
