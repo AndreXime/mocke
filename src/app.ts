@@ -4,6 +4,7 @@ import { setupCors } from "./lib/cors.js";
 import { setupErrorHandler } from "./lib/errors.js";
 import { setupOpenApi } from "./lib/openapi.js";
 import { registerCep } from "./modules/cep/index.js";
+import { registerCompanies } from "./modules/companies/index.js";
 import { registerMovies } from "./modules/movies/index.js";
 import { registerNews } from "./modules/news/index.js";
 import { registerProducts } from "./modules/products/index.js";
@@ -24,6 +25,7 @@ export default function setupApp() {
 	registerNews(app);
 	registerMovies(app);
 	registerUsers(app);
+	registerCompanies(app);
 
 	setupOpenApi(app);
 

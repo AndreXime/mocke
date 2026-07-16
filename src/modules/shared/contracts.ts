@@ -2,6 +2,7 @@ import type { z } from "@hono/zod-openapi";
 import { paginate } from "../../database/runtime/query.js";
 import { getDatasetMeta } from "../../database/runtime/store.js";
 import { CepCoordinateSchema } from "../cep/api/list-ceps.js";
+import { CompanySchema } from "../companies/api/list-companies.js";
 import { MovieSchema } from "../movies/api/list-movies.js";
 import { NewsArticleSchema } from "../news/api/list-news.js";
 import { ProductSchema } from "../products/api/list-products.js";
@@ -13,6 +14,7 @@ export const datasetSchemas = {
 	news: NewsArticleSchema,
 	movies: MovieSchema,
 	users: UserSchema,
+	companies: CompanySchema,
 } as const;
 
 export type DatasetName = keyof typeof datasetSchemas;
@@ -23,7 +25,9 @@ export type DatasetRecords = {
 
 const SAMPLE_LIMIT = 100;
 
-function schemaFieldNames(schema: (typeof datasetSchemas)[DatasetName]): string[] {
+function schemaFieldNames(
+	schema: (typeof datasetSchemas)[DatasetName],
+): string[] {
 	return Object.keys(schema.shape);
 }
 

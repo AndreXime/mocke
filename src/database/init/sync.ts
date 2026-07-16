@@ -167,8 +167,14 @@ async function buildDatabase(
 		tmp
 			.prepare("INSERT INTO _meta (key, value) VALUES (?, ?)")
 			.run("data_hash", hash);
+		// Merge WAL into the main file so rename does not leave orphan sidecars.
+		tmp.run("PRAGMA wal_checkpoint(TRUNCATE)");
 		tmp.close();
+		await rm(`${DB_TMP_PATH}-wal`, { force: true });
+		await rm(`${DB_TMP_PATH}-shm`, { force: true });
 		await rename(DB_TMP_PATH, DB_PATH);
+		await rm(`${DB_PATH}-wal`, { force: true });
+		await rm(`${DB_PATH}-shm`, { force: true });
 	} catch (error) {
 		try {
 			tmp.close();
@@ -176,6 +182,8 @@ async function buildDatabase(
 			/* already closed */
 		}
 		await rm(DB_TMP_PATH, { force: true });
+		await rm(`${DB_TMP_PATH}-wal`, { force: true });
+		await rm(`${DB_TMP_PATH}-shm`, { force: true });
 		throw error;
 	}
 }
@@ -188,12 +196,18 @@ export async function syncDatasets(): Promise<Database> {
 
 	const existing = Bun.file(DB_PATH);
 	if (await existing.exists()) {
-		const current = openDatabase(DB_PATH);
-		const storedHash = readMetaHash(current);
-		if (storedHash === hash) {
-			return current;
+		try {
+			const current = openDatabase(DB_PATH);
+			const storedHash = readMetaHash(current);
+			if (storedHash === hash) {
+				return current;
+			}
+			current.close();
+		} catch {
+			await rm(DB_PATH, { force: true });
+			await rm(`${DB_PATH}-wal`, { force: true });
+			await rm(`${DB_PATH}-shm`, { force: true });
 		}
-		current.close();
 	}
 
 	try {

@@ -1,4 +1,5 @@
 import { cepDoc } from "../cep/docs.js";
+import { companiesDoc } from "../companies/docs.js";
 import { moviesDoc } from "../movies/docs.js";
 import { newsDoc } from "../news/docs.js";
 import { productsDoc } from "../products/docs.js";
@@ -11,4 +12,5 @@ export const catalog: DocProps[] = [
 	newsDoc,
 	moviesDoc,
 	usersDoc,
+	companiesDoc,
 ];

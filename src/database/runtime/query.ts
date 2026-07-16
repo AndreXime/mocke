@@ -81,9 +81,11 @@ export function paginate(
 	const totalPages = Math.max(1, Math.ceil(total / limit));
 	const start = (page - 1) * limit;
 
-	const rows = prepare(
-		`SELECT * FROM ${table} ${clause} LIMIT ? OFFSET ?`,
-	).all(...values, limit, start) as Array<Record<string, string | null>>;
+	const rows = prepare(`SELECT * FROM ${table} ${clause} LIMIT ? OFFSET ?`).all(
+		...values,
+		limit,
+		start,
+	) as Array<Record<string, string | null>>;
 
 	return {
 		dataset: dataset.name,
