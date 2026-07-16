@@ -27,7 +27,7 @@ interface ExtraTab {
 	items: ExtraTabItem[];
 }
 
-interface ResourcePageProps {
+export interface DocProps {
 	title: string;
 	kicker: string;
 	description: string;
@@ -121,7 +121,7 @@ function ExtraTabSection({
 	);
 }
 
-export function ResourcePage(Props: ResourcePageProps) {
+function DocPage(Props: DocProps) {
 	const {
 		title,
 		kicker,
@@ -219,3 +219,5 @@ export function ResourcePage(Props: ResourcePageProps) {
 		</Layout>
 	);
 }
+
+export const generateDocPage = (props: DocProps) => DocPage(props);

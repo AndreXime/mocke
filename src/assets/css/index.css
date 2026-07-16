@@ -189,35 +189,48 @@ header.hero {
 	letter-spacing: -0.01em;
 }
 
-.page-link--products {
+.page-links .page-link:nth-child(4n + 1) {
 	border-left: 3px solid var(--color-get);
 }
 
-.page-link--ceps {
+.page-links .page-link:nth-child(4n + 1) .kicker {
+	color: var(--color-get);
+}
+
+.page-links .page-link:nth-child(4n + 2) {
 	border-left: 3px solid var(--color-post);
 }
 
-.page-link--ceps:hover {
+.page-links .page-link:nth-child(4n + 2):hover {
 	border-color: var(--color-post);
-	border-left-width: 3px;
 }
 
-.page-link--news {
+.page-links .page-link:nth-child(4n + 2) .kicker {
+	color: var(--color-post);
+}
+
+.page-links .page-link:nth-child(4n + 3) {
 	border-left: 3px solid var(--color-put);
 }
 
-.page-link--news:hover {
+.page-links .page-link:nth-child(4n + 3):hover {
 	border-color: var(--color-put);
-	border-left-width: 3px;
 }
 
-.page-link--movies {
+.page-links .page-link:nth-child(4n + 3) .kicker {
+	color: var(--color-put);
+}
+
+.page-links .page-link:nth-child(4n + 4) {
 	border-left: 3px solid var(--color-accent);
 }
 
-.page-link--movies:hover {
+.page-links .page-link:nth-child(4n + 4):hover {
 	border-color: var(--color-accent);
-	border-left-width: 3px;
+}
+
+.page-links .page-link:nth-child(4n + 4) .kicker {
+	color: var(--color-accent);
 }
 
 .kicker {
@@ -227,18 +240,6 @@ header.hero {
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
-}
-
-.page-link--ceps .kicker {
-	color: var(--color-post);
-}
-
-.page-link--news .kicker {
-	color: var(--color-put);
-}
-
-.page-link--movies .kicker {
-	color: var(--color-accent);
 }
 
 .blurb {
