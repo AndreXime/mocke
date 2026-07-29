@@ -1,4 +1,5 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
+import { registerMockMutations } from "../shared/mock-mutations.js";
 import { registerGetUser } from "./api/get-user.js";
 import { registerListUsers } from "./api/list-users.js";
 import { usersDocPage } from "./docs.js";
@@ -8,4 +9,5 @@ export function registerUsers(app: OpenAPIHono): void {
 
 	registerListUsers(app);
 	registerGetUser(app);
+	registerMockMutations(app, { name: "users", tag: "Users" });
 }
