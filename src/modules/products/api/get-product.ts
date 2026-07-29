@@ -15,6 +15,12 @@ const getProductRoute = createRoute({
 				example: "B091F3YVH6",
 			}),
 		}),
+		query: z.object({
+			fields: z.string().optional().openapi({
+				example: "id,title",
+				description: "Projecao CSV de campos na resposta.",
+			}),
+		}),
 	},
 	responses: {
 		200: {
@@ -31,6 +37,6 @@ const getProductRoute = createRoute({
 export function registerGetProduct(app: OpenAPIHono): void {
 	app.openapi(getProductRoute, (c) => {
 		const { id } = c.req.valid("param");
-		return c.json(getRecord("products", id), 200);
+		return c.json(getRecord("products", id, c.req.url), 200);
 	});
 }

@@ -1,6 +1,11 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import { ErrorSchema, listPage, pageResultSchema } from "../../shared/api.js";
+import {
+	ErrorSchema,
+	listPage,
+	listQueryExtrasSchema,
+	pageResultSchema,
+} from "../../shared/api.js";
 
 export const NewsArticleSchema = z
 	.object({
@@ -23,12 +28,10 @@ const listNewsRoute = createRoute({
 	tags: ["News"],
 	summary: "Listar noticias",
 	description:
-		"Artigos de noticia (CSV). Filtre por igualdade em title, text, subject ou date. Valores separados por virgula no mesmo campo fazem OR.",
+		"Artigos de noticia (CSV). Filtre por igualdade em title, text, subject ou date. Valores separados por virgula no mesmo campo fazem OR. Use q/search, searchFields, sort, order e fields.",
 	request: {
-		query: z
-			.object({
-				page: z.string().optional().openapi({ example: "1" }),
-				limit: z.string().optional().openapi({ example: "20" }),
+		query: listQueryExtrasSchema
+			.extend({
 				subject: z.string().optional().openapi({ example: "politicsNews" }),
 				date: z.string().optional().openapi({ example: "December 31, 2017" }),
 				title: z.string().optional(),

@@ -15,6 +15,12 @@ const getMovieRoute = createRoute({
 				example: "19995",
 			}),
 		}),
+		query: z.object({
+			fields: z.string().optional().openapi({
+				example: "id,title",
+				description: "Projecao CSV de campos na resposta.",
+			}),
+		}),
 	},
 	responses: {
 		200: {
@@ -31,6 +37,6 @@ const getMovieRoute = createRoute({
 export function registerGetMovie(app: OpenAPIHono): void {
 	app.openapi(getMovieRoute, (c) => {
 		const { id } = c.req.valid("param");
-		return c.json(getRecord("movies", id), 200);
+		return c.json(getRecord("movies", id, c.req.url), 200);
 	});
 }

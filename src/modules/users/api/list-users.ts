@@ -1,6 +1,11 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import { ErrorSchema, listPage, pageResultSchema } from "../../shared/api.js";
+import {
+	ErrorSchema,
+	listPage,
+	listQueryExtrasSchema,
+	pageResultSchema,
+} from "../../shared/api.js";
 
 export const UserSchema = z
 	.object({
@@ -35,12 +40,10 @@ const listUsersRoute = createRoute({
 	tags: ["Users"],
 	summary: "Listar usuarios",
 	description:
-		"Usuarios fake (estilo randomuser). Filtre por igualdade em qualquer campo, ex.: gender, nationality, country, city. Valores separados por virgula no mesmo campo fazem OR.",
+		"Usuarios fake (estilo randomuser). Filtre por igualdade em qualquer campo, ex.: gender, nationality, country, city. Valores separados por virgula no mesmo campo fazem OR. Use q/search, searchFields, sort, order e fields.",
 	request: {
-		query: z
-			.object({
-				page: z.string().optional().openapi({ example: "1" }),
-				limit: z.string().optional().openapi({ example: "20" }),
+		query: listQueryExtrasSchema
+			.extend({
 				gender: z.string().optional().openapi({ example: "female" }),
 				nationality: z.string().optional().openapi({ example: "US" }),
 				country: z.string().optional().openapi({ example: "United States" }),

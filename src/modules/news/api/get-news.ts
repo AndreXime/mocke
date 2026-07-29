@@ -15,6 +15,12 @@ const getNewsRoute = createRoute({
 				example: "1",
 			}),
 		}),
+		query: z.object({
+			fields: z.string().optional().openapi({
+				example: "id,title",
+				description: "Projecao CSV de campos na resposta.",
+			}),
+		}),
 	},
 	responses: {
 		200: {
@@ -31,6 +37,6 @@ const getNewsRoute = createRoute({
 export function registerGetNews(app: OpenAPIHono): void {
 	app.openapi(getNewsRoute, (c) => {
 		const { id } = c.req.valid("param");
-		return c.json(getRecord("news", id), 200);
+		return c.json(getRecord("news", id, c.req.url), 200);
 	});
 }

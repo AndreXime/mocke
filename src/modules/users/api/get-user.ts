@@ -15,6 +15,12 @@ const getUserRoute = createRoute({
 				example: "1",
 			}),
 		}),
+		query: z.object({
+			fields: z.string().optional().openapi({
+				example: "id,email",
+				description: "Projecao CSV de campos na resposta.",
+			}),
+		}),
 	},
 	responses: {
 		200: {
@@ -31,6 +37,6 @@ const getUserRoute = createRoute({
 export function registerGetUser(app: OpenAPIHono): void {
 	app.openapi(getUserRoute, (c) => {
 		const { id } = c.req.valid("param");
-		return c.json(getRecord("users", id), 200);
+		return c.json(getRecord("users", id, c.req.url), 200);
 	});
 }
