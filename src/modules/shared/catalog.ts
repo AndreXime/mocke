@@ -1,3 +1,4 @@
+import { authDoc } from "../auth/docs.js";
 import { CepCoordinateSchema } from "../cep/api/list-ceps.js";
 import { cepDoc } from "../cep/docs.js";
 import { CompanySchema } from "../companies/api/list-companies.js";
@@ -19,6 +20,7 @@ export const catalog: DocProps[] = [
 	moviesDoc,
 	usersDoc,
 	companiesDoc,
+	authDoc,
 ];
 
 export const datasetSchemas = {

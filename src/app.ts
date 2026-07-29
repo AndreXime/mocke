@@ -5,6 +5,7 @@ import { setupErrorHandler } from "./middlewares/errors.js";
 import { setupOpenApi } from "./middlewares/openapi.js";
 import { setupRateLimit } from "./middlewares/rate-limit.js";
 import { setupSecurityHeaders } from "./middlewares/security-headers.js";
+import { registerAuth } from "./modules/auth/index.js";
 import { registerCep } from "./modules/cep/index.js";
 import { registerCompanies } from "./modules/companies/index.js";
 import { registerHealth } from "./modules/health/index.js";
@@ -33,6 +34,7 @@ export default function setupApp() {
 	registerMovies(app);
 	registerUsers(app);
 	registerCompanies(app);
+	registerAuth(app);
 
 	setupOpenApi(app);
 
