@@ -13,6 +13,39 @@ export const ErrorSchema = z
 	})
 	.openapi("Error");
 
+export const OkSchema = z
+	.object({
+		ok: z.literal(true),
+	})
+	.openapi("Ok");
+
+export const listQueryExtrasSchema = z
+	.object({
+		page: z.string().optional().openapi({ example: "1" }),
+		limit: z.string().optional().openapi({ example: "20" }),
+		q: z.string().optional().openapi({
+			example: "shoes",
+			description: "Busca textual (LIKE). Tem prioridade sobre search.",
+		}),
+		search: z.string().optional().openapi({
+			description: "Alias de q.",
+		}),
+		searchFields: z.string().optional().openapi({
+			example: "title,description",
+			description: "Campos CSV para restringir a busca.",
+		}),
+		sort: z.string().optional().openapi({ example: "price" }),
+		order: z.string().optional().openapi({
+			example: "desc",
+			description: "asc (default) ou desc.",
+		}),
+		fields: z.string().optional().openapi({
+			example: "id,title,price",
+			description: "Projecao CSV de campos na resposta.",
+		}),
+	})
+	.passthrough();
+
 export function pageResultSchema<T extends z.ZodType>(
 	itemSchema: T,
 	name: string,
@@ -45,12 +78,14 @@ export function listPage<N extends DatasetName>(
 export function getRecord<N extends DatasetName>(
 	name: N,
 	id: string,
+	url?: string,
 ): DatasetRecords[N] {
 	const dataset = getDatasetMeta(name);
 	if (!dataset) {
 		throw new HTTPError(404, `Dataset ${name} indisponivel`);
 	}
-	const record = findById(dataset, id);
+	const params = url ? new URL(url).searchParams : new URLSearchParams();
+	const record = findById(dataset, id, params);
 	if (!record) {
 		throw new HTTPError(
 			404,

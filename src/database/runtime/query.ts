@@ -3,7 +3,16 @@ import type { DataRecord, Dataset, PageResult } from "../../lib/types.js";
 import { quoteIdent } from "../init/sqlite.js";
 import { getDb } from "./store.js";
 
-const RESERVED_PARAMS = new Set(["page", "limit"]);
+const RESERVED_PARAMS = new Set([
+	"page",
+	"limit",
+	"q",
+	"search",
+	"searchFields",
+	"sort",
+	"order",
+	"fields",
+]);
 const prepared = new Map<string, Statement>();
 
 function prepare(sql: string): Statement {
@@ -15,7 +24,7 @@ function prepare(sql: string): Statement {
 	return statement;
 }
 
-function splitFilterValues(raw: string): string[] {
+function splitCsv(raw: string): string[] {
 	return raw
 		.split(",")
 		.map((part) => part.trim())
@@ -34,6 +43,53 @@ function rowToRecord(
 	return record;
 }
 
+export function projectFields(
+	record: DataRecord,
+	params: URLSearchParams,
+	dataset: Dataset,
+): DataRecord {
+	const raw = params.get("fields");
+	if (!raw) return record;
+	const fieldSet = new Set(dataset.fields);
+	const requested = splitCsv(raw).filter((name) => fieldSet.has(name));
+	if (requested.length === 0) return record;
+	const projected: DataRecord = {};
+	for (const name of requested) {
+		projected[name] = record[name] ?? "";
+	}
+	return projected;
+}
+
+function resolveSearchFields(
+	params: URLSearchParams,
+	dataset: Dataset,
+): string[] {
+	const fieldSet = new Set(dataset.fields);
+	const raw = params.get("searchFields");
+	if (!raw) return [...dataset.fields];
+	const requested = splitCsv(raw).filter((name) => fieldSet.has(name));
+	return requested.length > 0 ? requested : [...dataset.fields];
+}
+
+function buildSearch(
+	params: URLSearchParams,
+	dataset: Dataset,
+): { clause: string; values: string[] } {
+	const term = params.get("q") ?? params.get("search");
+	if (!term || term.length === 0) return { clause: "", values: [] };
+
+	const fields = resolveSearchFields(params, dataset);
+	const parts: string[] = [];
+	const values: string[] = [];
+	for (const field of fields) {
+		const column = dataset.columnMap.get(field) ?? field;
+		parts.push(`${quoteIdent(column)} LIKE '%' || ? || '%'`);
+		values.push(term);
+	}
+	if (parts.length === 0) return { clause: "", values: [] };
+	return { clause: `(${parts.join(" OR ")})`, values };
+}
+
 function buildFilters(
 	params: URLSearchParams,
 	dataset: Dataset,
@@ -45,12 +101,11 @@ function buildFilters(
 	for (const [key, value] of params.entries()) {
 		if (RESERVED_PARAMS.has(key)) continue;
 		if (!fieldSet.has(key)) continue;
-		const filterValues = splitFilterValues(value);
+		const filterValues = splitCsv(value);
 		if (filterValues.length === 0) continue;
 
 		const column = dataset.columnMap.get(key) ?? key;
 		const col = quoteIdent(column);
-		// Exact match or membership in a comma-separated list (e.g. genres=Action).
 		const valueClauses = filterValues.map((filterValue) => {
 			values.push(filterValue, filterValue);
 			return `(${col} = ? OR (',' || REPLACE(${col}, ', ', ',') || ',') LIKE '%,' || ? || ',%')`;
@@ -58,8 +113,23 @@ function buildFilters(
 		parts.push(`(${valueClauses.join(" OR ")})`);
 	}
 
+	const search = buildSearch(params, dataset);
+	if (search.clause) {
+		parts.push(search.clause);
+		values.push(...search.values);
+	}
+
 	if (parts.length === 0) return { clause: "", values: [] };
 	return { clause: `WHERE ${parts.join(" AND ")}`, values };
+}
+
+function buildOrderBy(params: URLSearchParams, dataset: Dataset): string {
+	const sort = params.get("sort");
+	if (!sort || !dataset.fields.includes(sort)) return "";
+	const column = dataset.columnMap.get(sort) ?? sort;
+	const orderRaw = (params.get("order") ?? "asc").toLowerCase();
+	const order = orderRaw === "desc" ? "DESC" : "ASC";
+	return `ORDER BY ${quoteIdent(column)} ${order}`;
 }
 
 export function paginate(
@@ -72,6 +142,7 @@ export function paginate(
 		Math.max(1, Number(params.get("limit") || 20) || 20),
 	);
 	const { clause, values } = buildFilters(params, dataset);
+	const orderBy = buildOrderBy(params, dataset);
 	const table = quoteIdent(dataset.tableName);
 
 	const countRow = prepare(
@@ -81,11 +152,9 @@ export function paginate(
 	const totalPages = Math.max(1, Math.ceil(total / limit));
 	const start = (page - 1) * limit;
 
-	const rows = prepare(`SELECT * FROM ${table} ${clause} LIMIT ? OFFSET ?`).all(
-		...values,
-		limit,
-		start,
-	) as Array<Record<string, string | null>>;
+	const rows = prepare(
+		`SELECT * FROM ${table} ${clause} ${orderBy} LIMIT ? OFFSET ?`,
+	).all(...values, limit, start) as Array<Record<string, string | null>>;
 
 	return {
 		dataset: dataset.name,
@@ -93,16 +162,22 @@ export function paginate(
 		limit,
 		total,
 		totalPages,
-		data: rows.map((row) => rowToRecord(row, dataset)),
+		data: rows.map((row) =>
+			projectFields(rowToRecord(row, dataset), params, dataset),
+		),
 	};
 }
 
-export function findById(dataset: Dataset, id: string): DataRecord | undefined {
+export function findById(
+	dataset: Dataset,
+	id: string,
+	params: URLSearchParams = new URLSearchParams(),
+): DataRecord | undefined {
 	const idColumn = dataset.columnMap.get(dataset.idField) ?? dataset.idField;
 	const row = prepare(
 		`SELECT * FROM ${quoteIdent(dataset.tableName)} WHERE ${quoteIdent(idColumn)} = ? LIMIT 1`,
 	).get(id) as Record<string, string | null> | null;
 
 	if (!row) return undefined;
-	return rowToRecord(row, dataset);
+	return projectFields(rowToRecord(row, dataset), params, dataset);
 }
