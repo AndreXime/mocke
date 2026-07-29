@@ -9,7 +9,7 @@ export function setupOpenApi(app: OpenAPIHono) {
 			title: "Mockê",
 			version: "1.0.0",
 			description:
-				"API publica de mocks. Cada arquivo em /data vira um dataset com paginacao e filtros por igualdade de campo. Valores separados por virgula no mesmo campo fazem OR.",
+				"API publica de mocks. Datasets com paginacao, filtros por igualdade, busca textual (q), ordenacao (sort/order), projecao (fields), mutacoes fake e auth mock.",
 		},
 		tags: catalog.map((dataset) => ({
 			name: dataset.title,

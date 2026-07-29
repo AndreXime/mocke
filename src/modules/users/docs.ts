@@ -34,13 +34,38 @@ export const usersDoc: DocProps = {
 			path: "/api/users",
 			href: "/api/users?limit=5",
 			description:
-				"Lista paginada. Query: page, limit e qualquer campo do usuario.",
+				"Lista paginada. Query: page, limit, q/search, searchFields, sort, order, fields e qualquer campo do usuario.",
 		},
 		{
 			method: "GET",
 			path: "/api/users/{id}",
 			href: "/api/users/1",
-			description: "Busca um usuario pelo id.",
+			description: "Busca um usuario pelo id. Query opcional: fields.",
+		},
+		{
+			method: "POST",
+			path: "/api/users",
+			href: "/api/users",
+			description:
+				"Mock create: 201 { ok: true }. Nao persiste. Query fail=0..1 para 500 probabilistico.",
+		},
+		{
+			method: "PUT",
+			path: "/api/users/{id}",
+			href: "/api/users/1",
+			description: "Mock replace: 200 { ok: true }. Nao persiste.",
+		},
+		{
+			method: "PATCH",
+			path: "/api/users/{id}",
+			href: "/api/users/1",
+			description: "Mock patch: 200 { ok: true }. Nao persiste.",
+		},
+		{
+			method: "DELETE",
+			path: "/api/users/{id}",
+			href: "/api/users/1",
+			description: "Mock delete: 204. Nao persiste.",
 		},
 	],
 	examples: [

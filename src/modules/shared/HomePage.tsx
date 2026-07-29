@@ -8,8 +8,8 @@ export const HomePage = (
 				<p class="brand">Mockê</p>
 				<p class="lede">
 					API pública de mocks para prototipar frontends e testes. Dados reais
-					de produtos, CEPs, notícias, filmes e usuários, com paginação, filtros
-					por campo e OpenAPI.
+					de produtos, CEPs, notícias, filmes e usuários, com paginação, busca,
+					ordenação, mutações fake, auth mock e OpenAPI.
 				</p>
 			</div>
 			<nav class="nav">

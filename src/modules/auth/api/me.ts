@@ -41,7 +41,7 @@ export function registerMe(app: OpenAPIHono): void {
 			throw new HTTPError(401, "Unauthorized");
 		}
 		const [scheme, token] = header.split(/\s+/, 2);
-		if (!scheme || scheme.toLowerCase() !== "bearer" || !token) {
+		if (scheme?.toLowerCase() !== "bearer" || !token) {
 			throw new HTTPError(401, "Unauthorized");
 		}
 		if (token === "forbidden") {

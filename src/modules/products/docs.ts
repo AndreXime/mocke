@@ -49,13 +49,38 @@ export const productsDoc: DocProps = {
 			path: "/api/products",
 			href: "/api/products?limit=5",
 			description:
-				"Lista paginada. Query: page, limit e qualquer campo. category aceita valores separados por virgula (OR).",
+				"Lista paginada. Query: page, limit, q/search, searchFields, sort, order, fields e qualquer campo. category aceita valores separados por virgula (OR).",
 		},
 		{
 			method: "GET",
 			path: "/api/products/{id}",
 			href: "/api/products/B091F3YVH6",
-			description: "Busca um produto pelo id.",
+			description: "Busca um produto pelo id. Query opcional: fields.",
+		},
+		{
+			method: "POST",
+			path: "/api/products",
+			href: "/api/products",
+			description:
+				"Mock create: 201 { ok: true }. Nao persiste. Query fail=0..1 para 500 probabilistico.",
+		},
+		{
+			method: "PUT",
+			path: "/api/products/{id}",
+			href: "/api/products/B091F3YVH6",
+			description: "Mock replace: 200 { ok: true }. Nao persiste.",
+		},
+		{
+			method: "PATCH",
+			path: "/api/products/{id}",
+			href: "/api/products/B091F3YVH6",
+			description: "Mock patch: 200 { ok: true }. Nao persiste.",
+		},
+		{
+			method: "DELETE",
+			path: "/api/products/{id}",
+			href: "/api/products/B091F3YVH6",
+			description: "Mock delete: 204. Nao persiste.",
 		},
 	],
 	examples: [
@@ -64,6 +89,18 @@ export const productsDoc: DocProps = {
 			path: "/api/products?limit=5",
 			href: "/api/products?limit=5",
 			description: "Primeiros 5 produtos.",
+		},
+		{
+			method: "GET",
+			path: "/api/products?q=shoes&searchFields=title&limit=5",
+			href: "/api/products?q=shoes&searchFields=title&limit=5",
+			description: "Busca textual em title.",
+		},
+		{
+			method: "GET",
+			path: "/api/products?sort=price&order=desc&fields=id,title,price&limit=5",
+			href: "/api/products?sort=price&order=desc&fields=id,title,price&limit=5",
+			description: "Ordenar por price e projetar campos.",
 		},
 		{
 			method: "GET",

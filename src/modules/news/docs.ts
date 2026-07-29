@@ -23,13 +23,38 @@ export const newsDoc: DocProps = {
 			path: "/api/news",
 			href: "/api/news?limit=5",
 			description:
-				"Lista paginada. Query: page, limit, title, text, subject, date.",
+				"Lista paginada. Query: page, limit, q/search, searchFields, sort, order, fields, title, text, subject, date.",
 		},
 		{
 			method: "GET",
 			path: "/api/news/{id}",
 			href: "/api/news/1",
-			description: "Busca uma noticia pelo id.",
+			description: "Busca uma noticia pelo id. Query opcional: fields.",
+		},
+		{
+			method: "POST",
+			path: "/api/news",
+			href: "/api/news",
+			description:
+				"Mock create: 201 { ok: true }. Nao persiste. Query fail=0..1 para 500 probabilistico.",
+		},
+		{
+			method: "PUT",
+			path: "/api/news/{id}",
+			href: "/api/news/1",
+			description: "Mock replace: 200 { ok: true }. Nao persiste.",
+		},
+		{
+			method: "PATCH",
+			path: "/api/news/{id}",
+			href: "/api/news/1",
+			description: "Mock patch: 200 { ok: true }. Nao persiste.",
+		},
+		{
+			method: "DELETE",
+			path: "/api/news/{id}",
+			href: "/api/news/1",
+			description: "Mock delete: 204. Nao persiste.",
 		},
 	],
 	examples: [

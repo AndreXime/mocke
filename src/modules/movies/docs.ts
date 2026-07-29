@@ -44,13 +44,38 @@ export const moviesDoc: DocProps = {
 			path: "/api/movies",
 			href: "/api/movies?limit=5",
 			description:
-				"Lista paginada. Query: page, limit e qualquer campo do filme.",
+				"Lista paginada. Query: page, limit, q/search, searchFields, sort, order, fields e qualquer campo do filme.",
 		},
 		{
 			method: "GET",
 			path: "/api/movies/{id}",
 			href: "/api/movies/19995",
-			description: "Busca um filme pelo id TMDB.",
+			description: "Busca um filme pelo id TMDB. Query opcional: fields.",
+		},
+		{
+			method: "POST",
+			path: "/api/movies",
+			href: "/api/movies",
+			description:
+				"Mock create: 201 { ok: true }. Nao persiste. Query fail=0..1 para 500 probabilistico.",
+		},
+		{
+			method: "PUT",
+			path: "/api/movies/{id}",
+			href: "/api/movies/19995",
+			description: "Mock replace: 200 { ok: true }. Nao persiste.",
+		},
+		{
+			method: "PATCH",
+			path: "/api/movies/{id}",
+			href: "/api/movies/19995",
+			description: "Mock patch: 200 { ok: true }. Nao persiste.",
+		},
+		{
+			method: "DELETE",
+			path: "/api/movies/{id}",
+			href: "/api/movies/19995",
+			description: "Mock delete: 204. Nao persiste.",
 		},
 	],
 	examples: [
