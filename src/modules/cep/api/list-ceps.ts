@@ -1,6 +1,11 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import { ErrorSchema, listPage, pageResultSchema } from "../../shared/api.js";
+import {
+	ErrorSchema,
+	listPage,
+	listQueryExtrasSchema,
+	pageResultSchema,
+} from "../../shared/api.js";
 
 export const CepCoordinateSchema = z
 	.object({
@@ -18,12 +23,10 @@ const listCepsRoute = createRoute({
 	tags: ["CEP"],
 	summary: "Listar CEPs com coordenadas",
 	description:
-		"Tabela de CEP brasileiro com longitude e latitude. Filtre por POSTCODE, LON ou LAT.",
+		"Tabela de CEP brasileiro com longitude e latitude. Filtre por POSTCODE, LON ou LAT. Use q/search, searchFields, sort, order e fields.",
 	request: {
-		query: z
-			.object({
-				page: z.string().optional().openapi({ example: "1" }),
-				limit: z.string().optional().openapi({ example: "20" }),
+		query: listQueryExtrasSchema
+			.extend({
 				POSTCODE: z.string().optional().openapi({ example: "01310" }),
 				LON: z.string().optional(),
 				LAT: z.string().optional(),

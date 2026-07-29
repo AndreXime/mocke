@@ -1,6 +1,11 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import { ErrorSchema, listPage, pageResultSchema } from "../../shared/api.js";
+import {
+	ErrorSchema,
+	listPage,
+	listQueryExtrasSchema,
+	pageResultSchema,
+} from "../../shared/api.js";
 
 export const MovieSchema = z
 	.object({
@@ -41,12 +46,10 @@ const listMoviesRoute = createRoute({
 	tags: ["Movies"],
 	summary: "Listar filmes",
 	description:
-		"Catalogo TMDB 5000. Filtre por igualdade em qualquer campo (ex.: genres, original_language, directors, cast). Valores separados por virgula no mesmo campo fazem OR; em listas (genres, cast) tambem encontra o item dentro da celula.",
+		"Catalogo TMDB 5000. Filtre por igualdade em qualquer campo (ex.: genres, original_language, directors, cast). Valores separados por virgula no mesmo campo fazem OR; em listas (genres, cast) tambem encontra o item dentro da celula. Use q/search, searchFields, sort, order e fields.",
 	request: {
-		query: z
-			.object({
-				page: z.string().optional().openapi({ example: "1" }),
-				limit: z.string().optional().openapi({ example: "20" }),
+		query: listQueryExtrasSchema
+			.extend({
 				genres: z.string().optional().openapi({
 					example: "Action,Comedy",
 					description: "Um genero ou varios separados por virgula (OR).",

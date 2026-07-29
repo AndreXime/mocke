@@ -9,7 +9,12 @@ Licença: [MIT](LICENSE).
 - **Datasets prontos**: produtos, notícias, CEPs, filmes (TMDB), usuários e empresas
 - **Paginação** com `page` e `limit`
 - **Filtros por campo**: igualdade simples; vários valores separados por vírgula fazem OR
-- **Docs interativas**: Swagger em `/docs` e páginas HTML por recurso (`/products`, `/news`, `/cep`, `/movies`, `/users`, `/companies`)
+- **Busca textual** com `q` ou `search` (LIKE); `searchFields` restringe os campos
+- **Ordenação** com `sort` e `order` (`asc`/`desc`)
+- **Projeção de campos** com `fields=id,title,price`
+- **Mutações fake** (`POST`/`PUT`/`PATCH`/`DELETE`) sem persistir; `fail=0..1` para 500 probabilístico
+- **Auth mock**: `POST /api/auth/login` e `GET /api/auth/me` (Bearer)
+- **Docs interativas**: Swagger em `/docs` e páginas HTML por recurso (`/products`, `/news`, `/cep`, `/movies`, `/users`, `/companies`, `/auth`)
 - **OpenAPI** em `/openapi.json`
 - **CORS aberto** para consumo direto do browser
 - **Cache local em SQLite**: reinícios sem releitura dos CSVs quando `data/` não mudou
@@ -81,11 +86,15 @@ curl "http://localhost:3000/ready"    # SQLite + datasets carregados
 
 ```bash
 curl "http://localhost:3000/api/products?limit=5&inStock=True"
+curl "http://localhost:3000/api/products?q=shoes&searchFields=title&sort=price&order=desc&fields=id,title,price&limit=5"
 curl "http://localhost:3000/api/news?subject=politicsNews&limit=5"
 curl "http://localhost:3000/api/code_cep_coordinates/01310"
 curl "http://localhost:3000/api/movies?genres=Action&limit=5"
 curl "http://localhost:3000/api/users?gender=female&limit=5"
 curl "http://localhost:3000/api/companies?industry=banking&limit=5"
+curl -X POST "http://localhost:3000/api/products?fail=0"
+curl -X POST "http://localhost:3000/api/auth/login"
+curl -H "Authorization: Bearer mock-token" "http://localhost:3000/api/auth/me"
 ```
 
 ## Como adicionar um módulo novo
@@ -97,7 +106,7 @@ O nome do dataset vem do arquivo em `data/` (ex.: `data/books.csv` → dataset `
    - `api/list-books.ts` — schema Zod (`BookSchema`), rota `GET /api/books`, usa `listPage("books", …)`
    - `api/get-book.ts` — rota `GET /api/books/{id}`, usa `getRecord("books", id)`
    - `docs.ts` — `DocProps` (campos, rotas, exemplos) + `generateDocPage`
-   - `index.ts` — `registerBooks(app)` com a página HTML `/books` e as duas rotas da API
+   - `index.ts` — `registerBooks(app)` com a página HTML `/books`, rotas GET e `registerMockMutations(app, { name: "books", tag: "Books" })`
 3. **Registre no app** em `src/app.ts`: importe e chame `registerBooks(app)`.
 4. **Inclua no catálogo** em `src/modules/shared/catalog.ts`:
    - adicione `booksDoc` em `catalog`

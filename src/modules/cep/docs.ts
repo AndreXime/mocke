@@ -16,13 +16,39 @@ export const cepDoc: DocProps = {
 			method: "GET",
 			path: "/api/code_cep_coordinates",
 			href: "/api/code_cep_coordinates?limit=5",
-			description: "Lista paginada. Query: page, limit, POSTCODE, LON, LAT.",
+			description:
+				"Lista paginada. Query: page, limit, q/search, searchFields, sort, order, fields, POSTCODE, LON, LAT.",
 		},
 		{
 			method: "GET",
 			path: "/api/code_cep_coordinates/{id}",
 			href: "/api/code_cep_coordinates/01310",
-			description: "Busca um CEP pelo POSTCODE.",
+			description: "Busca um CEP pelo POSTCODE. Query opcional: fields.",
+		},
+		{
+			method: "POST",
+			path: "/api/code_cep_coordinates",
+			href: "/api/code_cep_coordinates",
+			description:
+				"Mock create: 201 { ok: true }. Nao persiste. Query fail=0..1 para 500 probabilistico.",
+		},
+		{
+			method: "PUT",
+			path: "/api/code_cep_coordinates/{id}",
+			href: "/api/code_cep_coordinates/01310",
+			description: "Mock replace: 200 { ok: true }. Nao persiste.",
+		},
+		{
+			method: "PATCH",
+			path: "/api/code_cep_coordinates/{id}",
+			href: "/api/code_cep_coordinates/01310",
+			description: "Mock patch: 200 { ok: true }. Nao persiste.",
+		},
+		{
+			method: "DELETE",
+			path: "/api/code_cep_coordinates/{id}",
+			href: "/api/code_cep_coordinates/01310",
+			description: "Mock delete: 204. Nao persiste.",
 		},
 	],
 	examples: [

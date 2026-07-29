@@ -16,6 +16,12 @@ const getCepRoute = createRoute({
 				description: "POSTCODE (chave do registro)",
 			}),
 		}),
+		query: z.object({
+			fields: z.string().optional().openapi({
+				example: "POSTCODE,LAT",
+				description: "Projecao CSV de campos na resposta.",
+			}),
+		}),
 	},
 	responses: {
 		200: {
@@ -32,6 +38,6 @@ const getCepRoute = createRoute({
 export function registerGetCep(app: OpenAPIHono): void {
 	app.openapi(getCepRoute, (c) => {
 		const { id } = c.req.valid("param");
-		return c.json(getRecord("code_cep_coordinates", id), 200);
+		return c.json(getRecord("code_cep_coordinates", id, c.req.url), 200);
 	});
 }

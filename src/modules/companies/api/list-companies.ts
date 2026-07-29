@@ -1,6 +1,11 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import { ErrorSchema, listPage, pageResultSchema } from "../../shared/api.js";
+import {
+	ErrorSchema,
+	listPage,
+	listQueryExtrasSchema,
+	pageResultSchema,
+} from "../../shared/api.js";
 
 export const CompanySchema = z
 	.object({
@@ -30,12 +35,10 @@ const listCompaniesRoute = createRoute({
 	tags: ["Companies"],
 	summary: "Listar empresas",
 	description:
-		"Empresas com industria, porte e localizacao. Filtre por igualdade em qualquer campo, ex.: industry, country, size_range. Valores separados por virgula no mesmo campo fazem OR.",
+		"Empresas com industria, porte e localizacao. Filtre por igualdade em qualquer campo, ex.: industry, country, size_range. Valores separados por virgula no mesmo campo fazem OR. Use q/search, searchFields, sort, order e fields.",
 	request: {
-		query: z
-			.object({
-				page: z.string().optional().openapi({ example: "1" }),
-				limit: z.string().optional().openapi({ example: "20" }),
+		query: listQueryExtrasSchema
+			.extend({
 				industry: z.string().optional().openapi({
 					example: "information technology and services",
 				}),

@@ -1,6 +1,11 @@
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { createRoute, z } from "@hono/zod-openapi";
-import { ErrorSchema, listPage, pageResultSchema } from "../../shared/api.js";
+import {
+	ErrorSchema,
+	listPage,
+	listQueryExtrasSchema,
+	pageResultSchema,
+} from "../../shared/api.js";
 
 export const ProductSchema = z
 	.object({
@@ -31,12 +36,10 @@ const listProductsRoute = createRoute({
 	tags: ["Products"],
 	summary: "Listar produtos",
 	description:
-		"Catalogo de produtos (CSV Amazon). Filtre por igualdade em qualquer campo, ex: category, brand, inStock. Valores separados por virgula no mesmo campo fazem OR.",
+		"Catalogo de produtos (CSV Amazon). Filtre por igualdade em qualquer campo, ex: category, brand, inStock. Valores separados por virgula no mesmo campo fazem OR. Use q/search, searchFields, sort, order e fields.",
 	request: {
-		query: z
-			.object({
-				page: z.string().optional().openapi({ example: "1" }),
-				limit: z.string().optional().openapi({ example: "20" }),
+		query: listQueryExtrasSchema
+			.extend({
 				category: z.string().optional().openapi({
 					example: "Women's Clothing,Women's Shoes",
 					description: "Uma category ou varias separadas por virgula (OR).",

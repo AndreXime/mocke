@@ -15,6 +15,12 @@ const getCompanyRoute = createRoute({
 				example: "5872184",
 			}),
 		}),
+		query: z.object({
+			fields: z.string().optional().openapi({
+				example: "id,name",
+				description: "Projecao CSV de campos na resposta.",
+			}),
+		}),
 	},
 	responses: {
 		200: {
@@ -31,6 +37,6 @@ const getCompanyRoute = createRoute({
 export function registerGetCompany(app: OpenAPIHono): void {
 	app.openapi(getCompanyRoute, (c) => {
 		const { id } = c.req.valid("param");
-		return c.json(getRecord("companies", id), 200);
+		return c.json(getRecord("companies", id, c.req.url), 200);
 	});
 }
