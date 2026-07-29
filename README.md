@@ -26,28 +26,23 @@ Licença: [MIT](LICENSE).
 ```bash
 bun install
 bun run dev
+
+# Ou
+
+docker compose up -d --build
 ```
 
 Acesse `http://localhost:3000`.
 
-### Docker
+## Variaveis de ambiente
 
-```bash
-docker build -t mocke .
-docker run --rm -p 3000:3000 mocke
-```
+Variáveis opcionais via ambiente ou `.env` na raiz:
 
-Atrás de um proxy reverso, passe `TRUST_PROXY=true`:
-
-```bash
-docker run --rm -p 3000:3000 -e TRUST_PROXY=true mocke
-```
-
-O volume opcional `.cache` evita reimportar os CSVs a cada restart:
-
-```bash
-docker run --rm -p 3000:3000 -v mocke-cache:/app/.cache mocke
-```
+| Variável | Default no compose | Descrição |
+|----------|--------------------|-----------|
+| `PORT` | `3000` | Porta dentro do container |
+| `RATE_LIMIT_MAX` | `60` | Req. por janela |
+| `RATE_LIMIT_WINDOW_MS` | `60000` | Janela em ms |
 
 ## Rate limit
 
@@ -62,7 +57,7 @@ Por padrão, cada IP pode fazer **20 requisições por minuto** (janela fixa). A
 
 `OPTIONS`, `/health` e `/ready` não consomem o limite.
 
-O IP vem do socket da conexão. Só use `TRUST_PROXY=true` atrás de um proxy reverso que define `X-Forwarded-For` de forma confiável; caso contrário o header pode ser spoofado.
+O IP do cliente vem do primeiro hop de `X-Forwarded-For` (proxy/CDN). Se o header não existir, usa o IP do socket.
 
 ## Health checks
 
@@ -80,7 +75,6 @@ curl "http://localhost:3000/ready"    # SQLite + datasets carregados
 | `PORT` | `3000` | Porta HTTP |
 | `RATE_LIMIT_MAX` | `20` | Máximo de requisições por janela |
 | `RATE_LIMIT_WINDOW_MS` | `60000` | Duração da janela em ms |
-| `TRUST_PROXY` | `false` | Se `true`, usa o primeiro hop de `X-Forwarded-For` |
 
 ## Exemplos
 

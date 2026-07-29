@@ -31,12 +31,10 @@ function getSocketIp(c: Context): string | null {
 }
 
 export function getClientIp(c: Context): string {
-	if (env.trustProxy) {
-		const forwarded = c.req.header("x-forwarded-for");
-		if (forwarded) {
-			const first = forwarded.split(",")[0]?.trim();
-			if (first) return first;
-		}
+	const forwarded = c.req.header("x-forwarded-for");
+	if (forwarded) {
+		const first = forwarded.split(",")[0]?.trim();
+		if (first) return first;
 	}
 
 	return getSocketIp(c) ?? "unknown";
