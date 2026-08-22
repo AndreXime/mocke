@@ -8,3 +8,4 @@ dist/
 .env.*
 dist
 docs
+*.override.yml
